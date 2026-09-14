@@ -101,6 +101,10 @@ automatically).
 python -m dr.train --datasets aptos idrid --external messidor2 --size 512 --backbone tf_efficientnet_b3_ns
 ```
 
+On Kaggle, open [`notebooks/kaggle_train.ipynb`](notebooks/kaggle_train.ipynb) —
+it attaches the corpora, trains, prints the metrics, and verifies the exported
+ONNX graph still agrees with the checkpoint that was validated.
+
 On Kaggle, cache the resized images once â€” full-resolution JPEG decoding, not
 the GPU, is what makes an EyePACS epoch slow:
 
