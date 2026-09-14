@@ -17,5 +17,12 @@ artifacts/
 datasets/
 cache/
 
+# Local databases. These hold password hashes, patient records and the audit
+# log even in development, and must never leave the machine.
+*.db
+*.db-wal
+*.db-shm
+storage/
+
 .venv/
 .env
