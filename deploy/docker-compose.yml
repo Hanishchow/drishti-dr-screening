@@ -1,0 +1,64 @@
+# District deployment.
+#
+#   cd deploy && docker compose up -d
+#
+# Put real values in deploy/.env first (see .env.example). The API refuses to
+# start with the default signing key, which is deliberate: a default secret on
+# a district server lets anyone mint an ophthalmologist token.
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-drishti}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-drishti}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      # The API must not start migrating against a database still booting.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-drishti}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    # Not published: only the API should reach the database.
+    expose:
+      - "5432"
+
+  api:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DRISHTI_NODE_ID: ${DRISHTI_NODE_ID:-district-1}
+      DRISHTI_NODE_ROLE: district
+      DRISHTI_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-drishti}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-drishti}
+      DRISHTI_SECRET_KEY: ${DRISHTI_SECRET_KEY:?set DRISHTI_SECRET_KEY in .env}
+      DRISHTI_BOOTSTRAP_ADMIN_EMAIL: ${DRISHTI_BOOTSTRAP_ADMIN_EMAIL:-}
+      DRISHTI_BOOTSTRAP_ADMIN_PASSWORD: ${DRISHTI_BOOTSTRAP_ADMIN_PASSWORD:-}
+      DRISHTI_CORS_ORIGINS: ${DRISHTI_CORS_ORIGINS:-http://localhost:8000}
+      DRISHTI_DEVICE: ${DRISHTI_DEVICE:-auto}
+      DRISHTI_BATCH_SIZE: ${DRISHTI_BATCH_SIZE:-8}
+    ports:
+      - "${DRISHTI_PORT:-8000}:8000"
+    volumes:
+      # Model artefacts are mounted read-only: the serving process has no
+      # business rewriting the weights it is being audited against.
+      - ../artifacts:/app/artifacts:ro
+      - screening-images:/app/storage
+    # Uncomment for GPU inference (needs the NVIDIA container toolkit).
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+volumes:
+  db-data:
+  screening-images:
