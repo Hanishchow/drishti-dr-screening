@@ -9,355 +9,202 @@
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ============================================================ tokens */
 :root{
-  --bg:#f6f7f9;
-  --panel:#ffffff;
-  --panel-2:#fbfcfd;
-  --ink:#0e1116;
-  --ink-2:#39424e;
-  --muted:#6d7886;
-  --faint:#98a2ae;
-  --line:#e4e8ed;
-  --line-soft:#eef1f5;
-
-  /* One accent. Desaturated clinical blue (hsl 204 65% 40%). */
-  --accent:#246fa8;
-  --accent-ink:#ffffff;
-  --accent-wash:#eef4f9;
-
-  /* Severity is DATA encoding, not decoration — muted, not neon. */
+  --bg:#f6f7f9; --panel:#fff; --panel-2:#fbfcfd;
+  --ink:#0e1116; --ink-2:#39424e; --muted:#6d7886; --faint:#98a2ae;
+  --line:#e4e8ed; --line-soft:#eef1f5;
+  --accent:#246fa8; --accent-wash:#eef4f9;
   --g0:#2f8f5b; --g1:#78983f; --g2:#bf8a2e; --g3:#c2662f; --g4:#b1443a;
-  --ok:#2f8f5b; --warn:#bf8a2e; --bad:#b1443a;
-
-  --r-sm:8px; --r:14px; --r-lg:22px;
-  --shadow:0 1px 2px rgba(16,24,34,.04), 0 14px 34px -18px rgba(16,24,34,.16);
-  --shadow-lift:0 1px 2px rgba(16,24,34,.05), 0 22px 46px -20px rgba(16,24,34,.22);
-  --ease:cubic-bezier(.16,1,.3,1);
-  --spring:cubic-bezier(.34,1.46,.64,1);
-  --sans:'Satoshi','Segoe UI Variable Display',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  --mono:'JetBrains Mono',ui-monospace,'Cascadia Mono','SF Mono',Menlo,monospace;
+  --ok:#2f8f5b; --bad:#b1443a;
+  --r:14px; --r-lg:22px;
+  --shadow:0 1px 2px rgba(16,24,34,.04),0 14px 34px -18px rgba(16,24,34,.16);
+  --ease:cubic-bezier(.16,1,.3,1); --spring:cubic-bezier(.34,1.46,.64,1);
+  --sans:'Satoshi',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
 }
-*{box-sizing:border-box}
-html,body{margin:0}
-body{
-  background:var(--bg);color:var(--ink);
-  font-family:var(--sans);font-size:14px;line-height:1.55;
-  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
-}
+*{box-sizing:border-box} html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.55 var(--sans);
+  -webkit-font-smoothing:antialiased}
 h1,h2,h3,h4{margin:0;font-weight:700;letter-spacing:-.021em;line-height:1.15}
-p{margin:0}
-button,input,select{font-family:inherit}
+p{margin:0} button,input,select{font-family:inherit}
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
 
-/* ============================================================ chrome */
-.topbar{
-  position:sticky;top:0;z-index:40;
-  background:rgba(13,17,23,.92);
-  backdrop-filter:saturate(180%) blur(14px);
-  border-bottom:1px solid rgba(255,255,255,.07);
-  /* Inner refraction edge, not a glow. */
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
-}
-.topbar-in{
-  max-width:1560px;margin:0 auto;padding:0 24px;
-  display:flex;align-items:center;gap:18px;height:56px;
-}
-.brand{display:flex;align-items:baseline;gap:11px;min-width:0}
-.brand .mark{
-  font-size:17px;font-weight:900;letter-spacing:-.03em;color:#fff;
-}
-.brand .ps{
-  font-size:11.5px;color:#8fa2b5;letter-spacing:.02em;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;
-}
-.spacer{flex:1 1 auto}
-.models{display:flex;gap:7px;flex-wrap:wrap}
-.chip{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:11px;letter-spacing:.02em;padding:4px 10px 4px 8px;border-radius:20px;
-  background:rgba(255,255,255,.05);color:#93a5b8;
-  border:1px solid rgba(255,255,255,.08);
-  transition:color .3s var(--ease),background .3s var(--ease);
-}
-.chip[data-on="1"]{color:#9fe3bd;background:rgba(47,143,91,.14);border-color:rgba(47,143,91,.32)}
-.dot{width:6px;height:6px;border-radius:50%;background:#5d6b7a;flex:none}
+.topbar{position:sticky;top:0;z-index:40;background:rgba(13,17,23,.94);
+  backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid rgba(255,255,255,.07);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+.topbar-in{max-width:1560px;margin:0 auto;padding:0 24px;display:flex;
+  align-items:center;gap:16px;height:56px}
+.mark{font-size:17px;font-weight:900;letter-spacing:-.03em;color:#fff}
+.ps{font-size:11.5px;color:#8fa2b5}
+.spacer{flex:1}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:4px 10px 4px 8px;
+  border-radius:20px;background:rgba(255,255,255,.05);color:#93a5b8;
+  border:1px solid rgba(255,255,255,.08)}
+.chip[data-on="1"]{background:rgba(47,143,91,.14);color:#9fe3bd;border-color:rgba(47,143,91,.32)}
+.dot{width:6px;height:6px;border-radius:50%;background:#5d6b7a}
 .chip[data-on="1"] .dot{background:#57c98c;animation:breathe 2.6s ease-in-out infinite}
 @keyframes breathe{0%,100%{opacity:.45;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
+.who{font-size:12px;color:#c4d2de}
+.who b{color:#fff}
+.linkbtn{background:none;border:0;color:#8fa2b5;font-size:12px;cursor:pointer;padding:4px}
+.linkbtn:hover{color:#fff;text-decoration:underline}
 
-/* tabs */
 nav.views{background:#0d1117;border-bottom:1px solid rgba(255,255,255,.07)}
-.views-in{max-width:1560px;margin:0 auto;padding:0 24px;display:flex;gap:4px;position:relative}
-.views button{
-  background:none;border:0;color:#8fa2b5;padding:11px 4px;margin-right:22px;
-  font-size:13.5px;font-weight:500;cursor:pointer;position:relative;
-  transition:color .25s var(--ease);
-}
+.views-in{max-width:1560px;margin:0 auto;padding:0 24px;display:flex}
+.views button{background:none;border:0;color:#8fa2b5;padding:11px 4px;margin-right:22px;
+  font-size:13.5px;font-weight:500;cursor:pointer;position:relative;transition:color .25s var(--ease)}
 .views button:hover{color:#c4d2de}
 .views button[aria-selected="true"]{color:#fff}
-.views button::after{
-  content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;
-  background:var(--accent);border-radius:2px 2px 0 0;
-  transform:scaleX(0);transform-origin:left;
-  transition:transform .4s var(--ease);
-}
+.views button::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;
+  background:var(--accent);border-radius:2px 2px 0 0;transform:scaleX(0);transform-origin:left;
+  transition:transform .4s var(--ease)}
 .views button[aria-selected="true"]::after{transform:scaleX(1)}
 
 main{max-width:1560px;margin:0 auto;padding:26px 24px 72px}
+.stage{display:grid;grid-template-columns:320px minmax(0,1.4fr) minmax(0,.95fr);
+  gap:20px;align-items:start}
+@media(max-width:1380px){.stage{grid-template-columns:300px minmax(0,1fr)}}
+@media(max-width:900px){main{padding:18px 16px 56px}.stage{grid-template-columns:1fr;gap:16px}}
 
-/* ======================================== asymmetric app grid (VAR 8) */
-.stage{
-  display:grid;
-  grid-template-columns:308px minmax(0,1.45fr) minmax(0,.95fr);
-  gap:20px;align-items:start;
-}
-@media(max-width:1380px){.stage{grid-template-columns:288px minmax(0,1fr)}}
-@media(max-width:900px){
-  main{padding:18px 16px 56px}
-  .stage{grid-template-columns:1fr;gap:16px}
-}
-
-/* ============================================================ surfaces */
-.panel{
-  background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);
-  box-shadow:var(--shadow);overflow:hidden;
-}
-.panel + .panel{margin-top:18px}
-.panel-h{
-  padding:14px 20px 12px;border-bottom:1px solid var(--line-soft);
-  display:flex;align-items:center;gap:10px;background:var(--panel-2);
-}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);
+  box-shadow:var(--shadow);overflow:hidden}
+.panel+.panel{margin-top:18px}
+.panel-h{padding:14px 20px 12px;border-bottom:1px solid var(--line-soft);display:flex;
+  align-items:center;gap:10px;background:var(--panel-2)}
 .panel-h h3{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.step{
-  font-family:var(--mono);font-size:10.5px;color:var(--faint);
-  border:1px solid var(--line);border-radius:5px;padding:1px 5px;flex:none;
-}
+.step{font-family:var(--mono);font-size:10.5px;color:var(--faint);border:1px solid var(--line);
+  border-radius:5px;padding:1px 5px}
 .panel-b{padding:20px}
-
-/* reveal cascade */
-.rise{opacity:0;transform:translateY(10px);animation:rise .62s var(--ease) forwards;
-  animation-delay:calc(var(--i,0) * 65ms)}
+.rise{opacity:0;transform:translateY(10px);animation:rise .6s var(--ease) forwards;
+  animation-delay:calc(var(--i,0)*65ms)}
 @keyframes rise{to{opacity:1;transform:none}}
-@media(prefers-reduced-motion:reduce){
-  .rise{animation:none;opacity:1;transform:none}
-  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
-}
+@media(prefers-reduced-motion:reduce){.rise{animation:none;opacity:1;transform:none}
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
-/* ============================================================ controls */
 label.f{display:block;font-size:12px;color:var(--muted);margin:0 0 7px;font-weight:500}
-label.f b{color:var(--ink);font-family:var(--mono);font-size:12px;font-weight:500}
-.field + .field{margin-top:15px}
-
-input[type=range]{
-  -webkit-appearance:none;appearance:none;width:100%;height:20px;background:none;cursor:grab;
-}
-input[type=range]:active{cursor:grabbing}
-input[type=range]::-webkit-slider-runnable-track{
-  height:4px;border-radius:3px;
-  background:linear-gradient(var(--accent),var(--accent)) 0/var(--fill,0%) 100% no-repeat,var(--line);
-}
-input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;width:15px;height:15px;border-radius:50%;margin-top:-5.5px;
-  background:#fff;border:1px solid #c3ccd6;
-  box-shadow:0 1px 3px rgba(16,24,34,.18);
-  transition:transform .22s var(--spring),border-color .2s var(--ease);
-}
-input[type=range]:hover::-webkit-slider-thumb{border-color:var(--accent)}
-input[type=range]:active::-webkit-slider-thumb{transform:scale(1.22)}
-input[type=range]::-moz-range-track{height:4px;border-radius:3px;background:var(--line)}
-input[type=range]::-moz-range-progress{height:4px;border-radius:3px;background:var(--accent)}
-input[type=range]::-moz-range-thumb{
-  width:14px;height:14px;border-radius:50%;background:#fff;border:1px solid #c3ccd6;
-}
-
-input[type=number],input[type=file]{
-  width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:var(--r-sm);
-  font-size:13px;background:#fff;color:var(--ink);
-  transition:border-color .2s var(--ease),box-shadow .2s var(--ease);
-}
-input[type=number]{font-family:var(--mono)}
-input[type=number]:focus,input[type=file]:focus{
-  outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-wash);
-}
+.field+.field{margin-top:14px}
+input[type=text],input[type=email],input[type=password],input[type=number],
+input[type=file],select{width:100%;padding:9px 11px;border:1px solid var(--line);
+  border-radius:8px;font-size:13px;background:#fff;color:var(--ink);
+  transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
+input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-wash)}
 input[type=file]{padding:8px;font-size:12px;color:var(--muted)}
-input[type=file]::file-selector-button{
-  font-family:inherit;font-size:12px;font-weight:500;margin-right:10px;
-  border:1px solid var(--line);background:var(--panel-2);color:var(--ink-2);
-  padding:5px 11px;border-radius:6px;cursor:pointer;transition:background .2s var(--ease);
-}
-input[type=file]::file-selector-button:hover{background:#f1f4f7}
-
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
-  padding:11px 16px;border:1px solid transparent;border-radius:10px;
-  font-size:13.5px;font-weight:700;letter-spacing:-.005em;cursor:pointer;
-  background:var(--accent);color:var(--accent-ink);
+input[type=file]::file-selector-button{font:inherit;font-size:12px;font-weight:500;margin-right:10px;
+  border:1px solid var(--line);background:var(--panel-2);color:var(--ink-2);padding:5px 11px;
+  border-radius:6px;cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
+  padding:11px 16px;border:1px solid transparent;border-radius:10px;font-size:13.5px;
+  font-weight:700;cursor:pointer;background:var(--accent);color:#fff;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 1px 2px rgba(16,24,34,.14);
-  transition:transform .16s var(--ease),background .2s var(--ease),box-shadow .2s var(--ease);
-}
+  transition:transform .16s var(--ease),background .2s var(--ease)}
 .btn:hover{background:#1f6299}
 .btn:active{transform:translateY(1px) scale(.988)}
 .btn:disabled{background:#a9b8c6;cursor:not-allowed;transform:none}
 .btn.ghost{background:#fff;border-color:var(--line);color:var(--ink);box-shadow:none}
-.btn.ghost:hover{background:var(--panel-2);border-color:#d3dae1}
-.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-
-.check{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--muted);cursor:pointer;margin-top:13px}
-.check input{width:15px;height:15px;accent-color:var(--accent);cursor:pointer}
-
+.btn.ghost:hover{background:var(--panel-2)}
+.btn.sm{width:auto;padding:7px 13px;font-size:12.5px}
 .hint{font-size:12px;color:var(--faint);line-height:1.5;margin-top:11px}
 .rule{height:1px;background:var(--line-soft);margin:18px 0}
 
-/* ============================================================ viewer */
-.segbar{display:flex;gap:2px;padding:12px 14px 0;background:var(--panel-2);flex-wrap:wrap}
-.segbar button{
-  background:none;border:0;padding:8px 13px;font-size:12.5px;font-weight:500;
-  color:var(--muted);cursor:pointer;border-radius:9px 9px 0 0;position:relative;
-  transition:color .22s var(--ease),background .22s var(--ease);
-}
-.segbar button:hover{color:var(--ink-2);background:rgba(16,24,34,.035)}
-.segbar button[aria-selected="true"]{color:var(--ink);background:var(--panel)}
-.segbar button[aria-selected="true"]::after{
-  content:'';position:absolute;inset:auto 10px -1px;height:2px;background:var(--accent);border-radius:2px;
-}
-.canvas{padding:22px;display:flex;justify-content:center;align-items:center;min-height:330px;background:var(--panel)}
-.canvas img{
-  max-width:min(100%,560px);width:100%;border-radius:var(--r);background:#0b0d10;
+.canvas{padding:22px;display:flex;justify-content:center;min-height:300px}
+.canvas img{max-width:min(100%,540px);width:100%;border-radius:var(--r);background:#0b0d10;
   box-shadow:0 2px 5px rgba(16,24,34,.1),0 26px 50px -26px rgba(16,24,34,.4);
-  animation:fade .5s var(--ease) both;
-}
+  animation:fade .5s var(--ease) both}
 @keyframes fade{from{opacity:0;transform:scale(.985)}to{opacity:1;transform:none}}
-.legend{
-  display:flex;gap:7px 20px;flex-wrap:wrap;justify-content:center;
-  padding:0 22px 20px;font-size:12.5px;color:var(--muted);
-}
+.segbar{display:flex;gap:2px;padding:12px 14px 0;background:var(--panel-2);flex-wrap:wrap}
+.segbar button{background:none;border:0;padding:8px 13px;font-size:12.5px;font-weight:500;
+  color:var(--muted);cursor:pointer;border-radius:9px 9px 0 0;position:relative}
+.segbar button[aria-selected="true"]{color:var(--ink);background:var(--panel)}
+.segbar button[aria-selected="true"]::after{content:'';position:absolute;inset:auto 10px -1px;
+  height:2px;background:var(--accent);border-radius:2px}
+.legend{display:flex;gap:7px 20px;flex-wrap:wrap;justify-content:center;padding:0 22px 20px;
+  font-size:12.5px;color:var(--muted)}
 .legend .it{display:inline-flex;align-items:center;gap:7px}
-.ring{width:11px;height:11px;border-radius:50%;border:2px solid;flex:none}
+.ring{width:11px;height:11px;border-radius:50%;border:2px solid}
 .legend b{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:500}
 
-/* empty + skeleton */
-.empty{padding:58px 26px;text-align:center;color:var(--muted);max-width:44ch;margin:0 auto}
+.empty{padding:50px 26px;text-align:center;color:var(--muted);max-width:44ch;margin:0 auto}
 .empty svg{color:#c3ccd6;margin-bottom:14px}
 .empty h4{font-size:15px;margin-bottom:6px;color:var(--ink-2)}
 .empty p{font-size:13px;line-height:1.6}
 .sk{background:var(--line-soft);border-radius:7px;position:relative;overflow:hidden}
-.sk::after{
-  content:'';position:absolute;inset:0;transform:translateX(-100%);
+.sk::after{content:'';position:absolute;inset:0;transform:translateX(-100%);
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent);
-  animation:shimmer 1.35s infinite;
-}
+  animation:shimmer 1.35s infinite}
 @keyframes shimmer{100%{transform:translateX(100%)}}
-.sk-img{width:min(100%,560px);aspect-ratio:1;border-radius:var(--r)}
+.sk-img{width:min(100%,540px);aspect-ratio:1;border-radius:var(--r)}
 
-/* ============================================================ result */
 .readout{display:flex;align-items:flex-start;gap:16px}
 .score{font-size:40px;font-weight:900;letter-spacing:-.05em;line-height:.92;font-family:var(--mono)}
-.readout .meta{padding-top:2px;min-width:0}
-.readout .meta .t{font-size:14.5px;font-weight:700;letter-spacing:-.015em}
-.readout .meta .s{font-size:12.5px;color:var(--muted);margin-top:1px}
-
-.pill{
-  display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;
-  letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:20px;
-  animation:pop .42s var(--spring) both;
-}
+.pill{display:inline-flex;align-items:center;font-size:11px;font-weight:700;letter-spacing:.05em;
+  text-transform:uppercase;padding:4px 10px;border-radius:20px;animation:pop .42s var(--spring) both}
 @keyframes pop{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
-.pill.routine{background:#e9f4ee;color:#256b45}
+.pill.routine,.pill.pass,.pill.ok{background:#e9f4ee;color:#256b45}
 .pill.soon{background:#fbf2df;color:#8a6212}
 .pill.urgent{background:#fcece1;color:#9c4f1d}
-.pill.emergency{background:#fbe7e4;color:#96322a}
-.pill.pass{background:#e9f4ee;color:#256b45}
-.pill.fail{background:#fbe7e4;color:#96322a}
-
-.track{height:6px;border-radius:4px;background:var(--line-soft);overflow:hidden;display:flex}
+.pill.emergency,.pill.fail{background:#fbe7e4;color:#96322a}
+.track{height:6px;border-radius:4px;background:var(--line-soft);overflow:hidden}
 .track i{display:block;transition:width .7s var(--ease)}
 .dist{display:flex;height:8px;border-radius:5px;overflow:hidden;background:var(--line-soft);margin:12px 0 7px}
-.dist i{display:block;transition:width .7s var(--ease)}
-
-/* borderless data rows — grouping by rule, not by box */
+.dist i{display:block}
 .rows{border-top:1px solid var(--line-soft)}
-.row{
-  display:flex;align-items:center;gap:12px;padding:8px 0;
-  border-bottom:1px solid var(--line-soft);font-size:12.5px;
-}
-.row .k{color:var(--muted);flex:1 1 auto;min-width:0}
-.row .v{font-family:var(--mono);font-size:12.5px;font-weight:500;flex:none}
-.row .g{font-family:var(--mono);font-weight:700;width:16px;text-align:right;flex:none}
-
+.row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--line-soft);
+  font-size:12.5px}
+.row .k{color:var(--muted);flex:1;min-width:0}
+.row .v{font-family:var(--mono);font-size:12.5px;font-weight:500}
+.row .g{font-family:var(--mono);font-weight:700;width:16px;text-align:right}
 .narr{list-style:none;margin:0;padding:0}
-.narr li{
-  position:relative;padding:0 0 0 15px;margin-bottom:11px;
-  font-size:13px;line-height:1.6;color:var(--ink-2);
-}
-.narr li::before{
-  content:'';position:absolute;left:0;top:7px;width:3px;height:calc(100% - 10px);
-  min-height:11px;border-radius:2px;background:var(--line);
-}
+.narr li{position:relative;padding-left:15px;margin-bottom:11px;font-size:13px;
+  line-height:1.6;color:var(--ink-2)}
+.narr li::before{content:'';position:absolute;left:0;top:7px;width:3px;
+  height:calc(100% - 10px);min-height:11px;border-radius:2px;background:var(--line)}
 .narr li.key::before{background:var(--accent)}
 .narr li.alert::before{background:var(--bad)}
 .narr li.alert{color:#8e3129;font-weight:500}
-
-.contrib{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:12.5px}
-.contrib .n{flex:0 0 138px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.contrib .t{flex:1 1 auto;height:6px;border-radius:4px;background:var(--line-soft);overflow:hidden}
-.contrib .t i{display:block;height:100%;background:var(--accent);
-  animation:grow .7s var(--ease) both;transform-origin:left}
-@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-.contrib .v{flex:0 0 46px;text-align:right;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
-
 table{width:100%;border-collapse:collapse;font-size:12.5px}
 th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line-soft)}
-th{
-  font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--faint);position:sticky;top:0;background:var(--panel);
-}
+th{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
 td.n,th.n{text-align:right;font-family:var(--mono)}
-tbody tr{transition:background .16s var(--ease)}
 tbody tr:hover{background:var(--panel-2)}
-.kind{
-  display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:500;
-  padding:1px 6px;border-radius:5px;background:var(--line-soft);color:var(--ink-2);
-}
-.scroll{max-height:320px;overflow:auto}
+.kind{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:1px 6px;
+  border-radius:5px;background:var(--line-soft);color:var(--ink-2)}
+.err{display:flex;gap:11px;padding:13px 15px;border-radius:var(--r);background:#fbe7e4;
+  color:#8e3129;font-size:13px;line-height:1.5;border:1px solid #f2cfc9;margin-bottom:14px}
+.ok-note{background:#e9f4ee;color:#256b45;border-color:#cfe6da}
 
-.err{
-  display:flex;gap:11px;padding:13px 15px;border-radius:var(--r);
-  background:#fbe7e4;color:#8e3129;font-size:13px;line-height:1.5;
-  border:1px solid #f2cfc9;
-}
-.err svg{flex:none;margin-top:1px}
-
-/* ============================================================ sim */
-.simstage{display:grid;grid-template-columns:300px minmax(0,1fr);gap:20px;align-items:start}
-@media(max-width:900px){.simstage{grid-template-columns:1fr}}
-
-/* metrics separated by rules, not boxed (Rule 4) */
-.metrics{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
   border:1px solid var(--line);border-radius:var(--r-lg);background:var(--panel);
-  box-shadow:var(--shadow);overflow:hidden;
-}
+  box-shadow:var(--shadow);overflow:hidden}
 .metric{padding:18px 20px;border-right:1px solid var(--line-soft)}
 .metric:last-child{border-right:0}
 @media(max-width:680px){.metric{border-right:0;border-bottom:1px solid var(--line-soft)}}
-.metric .v{font-family:var(--mono);font-size:25px;font-weight:700;letter-spacing:-.035em;line-height:1.1}
-.metric .l{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.4}
-
-.cmp{display:grid;grid-template-columns:104px minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:center;
-  padding:11px 0;border-bottom:1px solid var(--line-soft)}
+.metric .v{font-family:var(--mono);font-size:25px;font-weight:700;letter-spacing:-.035em}
+.metric .l{font-size:11.5px;color:var(--muted);margin-top:3px}
+.cmp{display:grid;grid-template-columns:104px minmax(0,1fr) minmax(0,1fr);gap:14px;
+  align-items:center;padding:11px 0;border-bottom:1px solid var(--line-soft)}
 .cmp:last-child{border-bottom:0}
 .cmp .lbl{font-size:12.5px;font-weight:500}
 .cmp .lbl s{display:block;font-size:11px;color:var(--faint);text-decoration:none;font-family:var(--mono)}
 .cmp .head{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:700}
 .bar{display:flex;align-items:center;gap:9px}
-.bar .t{flex:1 1 auto;height:18px;border-radius:5px;background:var(--line-soft);overflow:hidden}
-.bar .t i{display:block;height:100%;border-radius:5px;animation:grow .8s var(--ease) both;transform-origin:left}
-.bar .n{flex:0 0 40px;text-align:right;font-family:var(--mono);font-size:12px;font-weight:500}
+.bar .t{flex:1;height:18px;border-radius:5px;background:var(--line-soft);overflow:hidden}
+.bar .t i{display:block;height:100%;border-radius:5px}
+.bar .n{width:40px;text-align:right;font-family:var(--mono);font-size:12px;font-weight:500}
+.simstage{display:grid;grid-template-columns:300px minmax(0,1fr);gap:20px;align-items:start}
+@media(max-width:900px){.simstage{grid-template-columns:1fr}}
 
-.spin{
-  width:13px;height:13px;border:2px solid rgba(255,255,255,.34);border-top-color:#fff;
-  border-radius:50%;animation:sp .66s linear infinite;
-}
+.qitem{display:grid;grid-template-columns:70px 1fr auto;gap:14px;align-items:center;
+  padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.qitem:last-child{border-bottom:0}
+.qitem .who2{font-size:13px;font-weight:600}
+.qitem .sub{font-size:11.5px;color:var(--muted);font-family:var(--mono)}
+.breach{color:var(--bad);font-weight:600}
+
+.login-wrap{min-height:calc(100dvh - 56px);display:flex;align-items:center;justify-content:center;
+  padding:24px}
+.login{width:100%;max-width:380px}
+.spin{width:13px;height:13px;border:2px solid rgba(255,255,255,.34);border-top-color:#fff;
+  border-radius:50%;animation:sp .66s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 [hidden]{display:none!important}
 </style>
@@ -366,138 +213,173 @@ tbody tr:hover{background:var(--panel-2)}
 
 <header class="topbar">
   <div class="topbar-in">
-    <div class="brand">
-      <span class="mark">Drishti</span>
-      <span class="ps">Explainable DR screening &amp; district triage &middot; SIH26038</span>
-    </div>
+    <span class="mark">Drishti</span>
+    <span class="ps">DR screening &amp; district triage</span>
     <span class="spacer"></span>
-    <div class="models" id="models">
-      <span class="chip" data-on="1"><i class="dot"></i>ICDR rules</span>
-      <span class="chip" id="m-gbm"><i class="dot"></i>Feature GBM</span>
-      <span class="chip" id="m-cnn"><i class="dot"></i>EfficientNet-B0</span>
-    </div>
+    <span class="chip" id="chip-model"><i class="dot"></i>model</span>
+    <span class="who" id="who" hidden></span>
+    <button class="linkbtn" id="btn-logout" hidden>Sign out</button>
   </div>
 </header>
 
-<nav class="views">
+<nav class="views" id="nav" hidden>
   <div class="views-in" role="tablist">
-    <button id="tab-screen" role="tab" aria-selected="true">Screening</button>
-    <button id="tab-sim" role="tab" aria-selected="false">District simulation</button>
+    <button data-view="screen" aria-selected="true">Screening</button>
+    <button data-view="queue" aria-selected="false">Review queue</button>
+    <button data-view="sim" aria-selected="false">District planning</button>
   </div>
 </nav>
 
-<main>
-<!-- ===================================================== SCREENING -->
+<!-- ============================================================ LOGIN -->
+<section id="view-login">
+  <div class="login-wrap">
+    <div class="login">
+      <div class="panel rise">
+        <div class="panel-h"><h3>Sign in</h3></div>
+        <div class="panel-b">
+          <div id="login-error"></div>
+          <form id="login-form">
+            <div class="field">
+              <label class="f" for="email">Email</label>
+              <input type="email" id="email" autocomplete="username" required>
+            </div>
+            <div class="field">
+              <label class="f" for="password">Password</label>
+              <input type="password" id="password" autocomplete="current-password" required>
+            </div>
+            <button class="btn" id="btn-login" type="submit" style="margin-top:16px">Sign in</button>
+          </form>
+          <p class="hint">Accounts are issued by your district administrator.
+            A first administrator is created from the deployment environment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main id="app" hidden>
+<!-- ======================================================== SCREENING -->
 <section id="view-screen">
   <div class="stage">
-
-    <!-- rail -->
     <div>
       <div class="panel rise" style="--i:0">
-        <div class="panel-h"><span class="step">01</span><h3>Capture</h3></div>
+        <div class="panel-h"><span class="step">01</span><h3>Patient</h3></div>
         <div class="panel-b">
+          <div class="field">
+            <label class="f" for="mrn">Programme ID / ABHA</label>
+            <input type="text" id="mrn" placeholder="e.g. TN-SVG-004821">
+          </div>
+          <div class="field">
+            <label class="f" for="pname">Full name</label>
+            <input type="text" id="pname" placeholder="As on the health record">
+          </div>
+          <div class="field">
+            <label class="f" for="yob">Year of birth</label>
+            <input type="number" id="yob" min="1900" max="2100" placeholder="1968">
+          </div>
+          <button class="btn ghost" id="btn-patient" style="margin-top:14px">
+            Register / find patient</button>
+          <div id="patient-state"></div>
+        </div>
+      </div>
+
+      <div class="panel rise" style="--i:1">
+        <div class="panel-h"><span class="step">02</span><h3>Capture</h3></div>
+        <div class="panel-b">
+          <div class="field">
+            <label class="f" for="eye">Eye</label>
+            <select id="eye"><option value="R">Right</option><option value="L">Left</option></select>
+          </div>
           <div class="field">
             <label class="f" for="file">Fundus image</label>
             <input type="file" id="file" accept="image/*">
           </div>
-          <button class="btn ghost" id="btn-upload" style="margin-top:11px">Analyse upload</button>
-          <div class="rule"></div>
-          <label class="f" style="margin-bottom:11px">Or synthesise a labelled eye</label>
-          <div class="field">
-            <label class="f" for="grade">ICDR grade <b id="lab-grade">2</b></label>
-            <input type="range" id="grade" min="0" max="4" value="2">
-          </div>
-          <div class="field">
-            <label class="f" for="seed">Patient seed <b id="lab-seed">3</b></label>
-            <input type="range" id="seed" min="0" max="60" value="3">
-          </div>
-          <div class="field">
-            <label class="f" for="blur">Defocus <b id="lab-blur">0.0</b></label>
-            <input type="range" id="blur" min="0" max="8" step="0.5" value="0">
-          </div>
-          <div class="field">
-            <label class="f" for="vig">Uneven illumination <b id="lab-vig">0.0</b></label>
-            <input type="range" id="vig" min="0" max="1" step="0.1" value="0">
-          </div>
-          <div class="field">
-            <label class="f" for="glare">Lens glare <b id="lab-glare">0.00</b></label>
-            <input type="range" id="glare" min="0" max="2" step="0.25" value="0">
-          </div>
-          <div class="field">
-            <label class="f" for="exp">Exposure <b id="lab-exp">1.0</b></label>
-            <input type="range" id="exp" min="0.2" max="2.6" step="0.1" value="1">
-          </div>
-          <button class="btn" id="btn-demo" style="margin-top:17px">Screen this eye</button>
-          <label class="check" for="force">
-            <input type="checkbox" id="force"> Grade even if quality fails
-          </label>
-          <p class="hint">Push defocus or illumination up to watch the quality gate
-             reject the capture before any grading cost is paid.</p>
+          <button class="btn" id="btn-screen" style="margin-top:14px" disabled>
+            Screen this eye</button>
+          <p class="hint">The quality gate runs first. An unusable capture is
+             rejected in milliseconds so it can be retaken while the patient is
+             still in the chair.</p>
         </div>
       </div>
     </div>
 
-    <!-- viewer -->
     <div>
       <div class="panel rise" style="--i:1">
-        <div class="panel-h"><span class="step">02</span><h3>Retinal evidence</h3></div>
-        <div class="segbar" id="segbar" role="tablist"></div>
+        <div class="panel-h"><span class="step">03</span><h3>Retinal evidence</h3></div>
+        <div class="segbar" id="segbar"></div>
         <div class="canvas" id="canvas">
           <div class="empty">
             <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/>
-              <path d="M12 3v2M12 19v2M3 12h2M19 12h2"/>
-            </svg>
+              <path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg>
             <h4>No capture loaded</h4>
-            <p>Synthesise a labelled eye from the panel on the left, or upload a
-               fundus photograph to run the full pipeline.</p>
+            <p>Register a patient, then upload a fundus photograph to run the pipeline.</p>
           </div>
         </div>
         <div class="legend" id="legend"></div>
       </div>
-
-      <div class="panel rise" id="card-lesions" hidden style="--i:2">
-        <div class="panel-h"><span class="step">03</span><h3>Measured lesion inventory</h3></div>
-        <div class="scroll"><table id="lesiontab"></table></div>
+      <div class="panel rise" id="card-history" hidden style="--i:2">
+        <div class="panel-h"><h3>Screening history</h3></div>
+        <div class="panel-b"><table id="history"></table>
+          <div id="progression"></div></div>
       </div>
     </div>
 
-    <!-- results -->
     <div id="results">
       <div class="panel rise" style="--i:2">
         <div class="empty" style="padding:44px 24px">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/>
-          </svg>
+            <path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>
           <h4>Awaiting analysis</h4>
           <p>Quality, grade, triage and the reasoning behind them appear here.</p>
         </div>
       </div>
     </div>
-
   </div>
 </section>
 
-<!-- ===================================================== SIMULATION -->
+<!-- ============================================================ QUEUE -->
+<section id="view-queue" hidden>
+  <div class="stage" style="grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)">
+    <div class="panel rise">
+      <div class="panel-h"><h3>Cases awaiting a clinician</h3>
+        <span class="spacer"></span>
+        <button class="btn ghost sm" id="btn-refresh-queue">Refresh</button></div>
+      <div class="panel-b" id="queue-body">
+        <div class="empty"><h4>Loading queue</h4></div>
+      </div>
+    </div>
+    <div id="queue-detail">
+      <div class="panel rise" style="--i:1">
+        <div class="empty" style="padding:44px 24px">
+          <h4>No case selected</h4>
+          <p>Select a case to see its evidence and record a decision.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= SIMULATION -->
 <section id="view-sim" hidden>
   <div class="simstage">
-    <div class="panel rise" style="--i:0">
+    <div class="panel rise">
       <div class="panel-h"><h3>District parameters</h3></div>
       <div class="panel-b">
         <div class="field"><label class="f" for="s-phcs">Primary health centres</label>
-          <input type="number" id="s-phcs" value="25" min="1" max="400"></div>
-        <div class="field"><label class="f" for="s-ophth">Ophthalmologists in district</label>
-          <input type="number" id="s-ophth" value="2" min="1" max="60"></div>
+          <input type="number" id="s-phcs" value="25" min="1" max="500"></div>
+        <div class="field"><label class="f" for="s-ophth">Ophthalmologists</label>
+          <input type="number" id="s-ophth" value="2" min="1" max="200"></div>
         <div class="field"><label class="f" for="s-rate">Screenings per PHC per day</label>
-          <input type="number" id="s-rate" value="12" min="1" max="120"></div>
+          <input type="number" id="s-rate" value="12" min="1" max="200"></div>
         <div class="field"><label class="f" for="s-days">Simulation length (days)</label>
           <input type="number" id="s-days" value="180" min="30" max="1095"></div>
-        <div class="field"><label class="f" for="s-sens">AI sensitivity, referable DR</label>
+        <div class="field"><label class="f" for="s-sens">AI sensitivity (referable)</label>
           <input type="number" id="s-sens" value="0.92" min="0.5" max="1" step="0.01"></div>
-        <div class="field"><label class="f" for="s-spec">AI specificity, referable DR</label>
+        <div class="field"><label class="f" for="s-spec">AI specificity (referable)</label>
           <input type="number" id="s-spec" value="0.88" min="0.5" max="1" step="0.01"></div>
-        <button class="btn" id="btn-sim" style="margin-top:17px">Run both arms</button>
-        <p class="hint">Two arms run on one patient stream: AI triage, versus every
+        <button class="btn" id="btn-sim" style="margin-top:16px">Run both arms</button>
+        <p class="hint">Two arms on one patient stream: AI triage, versus every
            image read by an ophthalmologist.</p>
       </div>
     </div>
@@ -505,11 +387,10 @@ tbody tr:hover{background:var(--panel-2)}
       <div class="panel">
         <div class="empty" style="padding:70px 26px">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/>
-          </svg>
+            <path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
           <h4>Programme not yet simulated</h4>
-          <p>Model what triage does to a real district: who gets seen, how fast,
-             and what it costs the two specialists who actually exist.</p>
+          <p>Model what triage does to a district: who gets seen, how fast, and
+             what it costs the specialists who actually exist.</p>
         </div>
       </div>
     </div>
@@ -520,338 +401,401 @@ tbody tr:hover{background:var(--panel-2)}
 <script>
 const $ = s => document.querySelector(s);
 const GC = ['var(--g0)','var(--g1)','var(--g2)','var(--g3)','var(--g4)'];
-const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
 const num = n => (n === null || n === undefined) ? '—' : Number(n).toLocaleString('en-IN');
 
-/* ---------------- view switching ---------------- */
-function showView(which){
-  const scr = which === 'screen';
-  $('#tab-screen').setAttribute('aria-selected', scr);
-  $('#tab-sim').setAttribute('aria-selected', !scr);
-  $('#view-screen').hidden = !scr;
-  $('#view-sim').hidden = scr;
-}
-$('#tab-screen').onclick = () => showView('screen');
-$('#tab-sim').onclick = () => showView('sim');
+const state = {token:null, user:null, patient:null, screening:null, tab:'overlay'};
 
-/* ---------------- slider labels + fill ---------------- */
-function bind(id, lab, fmt = v => v){
-  const el = $('#' + id), out = $('#' + lab);
-  const upd = () => {
-    out.textContent = fmt(el.value);
-    const pct = (el.value - el.min) / (el.max - el.min) * 100;
-    el.style.setProperty('--fill', pct + '%');
-  };
-  el.addEventListener('input', upd); upd();
-}
-bind('grade','lab-grade'); bind('seed','lab-seed');
-bind('blur','lab-blur', v => (+v).toFixed(1));
-bind('vig','lab-vig', v => (+v).toFixed(1));
-bind('glare','lab-glare', v => (+v).toFixed(2));
-bind('exp','lab-exp', v => (+v).toFixed(1) + '×');
-
-/* ---------------- model status ---------------- */
-fetch('/api/health').then(r => r.json()).then(h => {
-  if (h.models.feature_gbm) $('#m-gbm').dataset.on = '1';
-  else $('#m-gbm').lastChild.textContent = 'Feature GBM — untrained';
-  if (h.models.efficientnet_b0) $('#m-cnn').dataset.on = '1';
-  else $('#m-cnn').lastChild.textContent = 'EfficientNet-B0 — absent';
-}).catch(() => {});
-
-/* ---------------- request helper ---------------- */
-async function post(url, form, btn, busyLabel){
-  const original = btn.textContent;
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span>' + busyLabel;
-  try {
-    const r = await fetch(url, { method:'POST', body:form });
-    if (!r.ok) {
-      const j = await r.json().catch(() => ({}));
-      throw new Error(j.detail || (r.status + ' ' + r.statusText));
-    }
-    return await r.json();
-  } finally {
-    btn.disabled = false; btn.textContent = original;
-  }
+/* ------------------------------------------------ transport */
+async function api(path, {method='GET', body, form, auth=true} = {}) {
+  const headers = {};
+  if (auth && state.token) headers.Authorization = `Bearer ${state.token}`;
+  let payload = body;
+  if (body && !form) { headers['Content-Type'] = 'application/json'; payload = JSON.stringify(body); }
+  const r = await fetch(path, {method, headers, body: payload});
+  if (r.status === 401) { signOut(); throw new Error('Session expired. Sign in again.'); }
+  const text = await r.text();
+  let data = null;
+  try { data = text ? JSON.parse(text) : null; } catch { data = {detail: text}; }
+  if (!r.ok) throw new Error(data?.detail || `${r.status} ${r.statusText}`);
+  return data;
 }
 
-function errorCard(msg){
-  return `<div class="panel"><div class="panel-b"><div class="err">
+function errBox(msg, ok=false) {
+  return `<div class="err ${ok ? 'ok-note' : ''}">
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
       <circle cx="12" cy="12" r="9"/><path d="M12 7.5v5M12 16h.01"/></svg>
-    <div><b>Analysis failed.</b><br>${esc(msg)}</div></div></div></div>`;
+    <div>${esc(msg)}</div></div>`;
 }
 
-/* skeletons while the pipeline runs — sized to the real layout */
-function showPending(){
+async function busy(btn, label, fn) {
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spin"></span>${label}`;
+  try { return await fn(); }
+  finally { btn.disabled = false; btn.textContent = original; }
+}
+
+/* ------------------------------------------------ session */
+function saveSession(tok) {
+  state.token = tok.access_token;
+  state.user = tok;
+  try { localStorage.setItem('drishti.session', JSON.stringify(tok)); } catch {}
+  showApp();
+}
+
+function signOut() {
+  state.token = state.user = null;
+  try { localStorage.removeItem('drishti.session'); } catch {}
+  $('#app').hidden = true; $('#nav').hidden = true;
+  $('#view-login').hidden = false;
+  $('#who').hidden = true; $('#btn-logout').hidden = true;
+}
+
+function showApp() {
+  $('#view-login').hidden = true;
+  $('#app').hidden = false; $('#nav').hidden = false;
+  $('#who').hidden = false; $('#btn-logout').hidden = false;
+  $('#who').innerHTML = `<b>${esc(state.user.full_name)}</b> · ${esc(state.user.role.replace(/_/g,' '))}`;
+  // Only clinicians get the queue tab; an ASHA worker cannot sign off anyway.
+  const canReview = ['ophthalmologist','district_admin'].includes(state.user.role);
+  document.querySelector('[data-view="queue"]').hidden = !canReview;
+  loadHealth();
+}
+
+$('#login-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  $('#login-error').innerHTML = '';
+  const form = new URLSearchParams({username: $('#email').value, password: $('#password').value});
+  await busy($('#btn-login'), 'Signing in', async () => {
+    try {
+      const r = await fetch('/api/auth/token', {method:'POST', body: form,
+        headers:{'Content-Type':'application/x-www-form-urlencoded'}});
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.detail || 'Sign in failed');
+      saveSession(data);
+    } catch (e) { $('#login-error').innerHTML = errBox(e.message); }
+  });
+});
+
+$('#btn-logout').onclick = signOut;
+
+async function loadHealth() {
+  try {
+    const h = await api('/api/health', {auth:false});
+    const chip = $('#chip-model');
+    chip.dataset.on = h.model.available ? '1' : '0';
+    chip.lastChild.textContent = h.model.available
+      ? `model ${h.model.version}` : 'no model loaded';
+  } catch {}
+}
+
+/* ------------------------------------------------ navigation */
+document.querySelectorAll('#nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('#nav button').forEach(x =>
+    x.setAttribute('aria-selected', x === b));
+  for (const v of ['screen','queue','sim'])
+    $('#view-' + v).hidden = (v !== b.dataset.view);
+  if (b.dataset.view === 'queue') loadQueue();
+});
+
+/* ------------------------------------------------ patient */
+$('#btn-patient').onclick = () => busy($('#btn-patient'), 'Looking up', async () => {
+  const mrn = $('#mrn').value.trim(), name = $('#pname').value.trim();
+  if (!mrn || !name) {
+    $('#patient-state').innerHTML = errBox('Programme ID and name are both required.');
+    return;
+  }
+  try {
+    const yob = parseInt($('#yob').value, 10);
+    state.patient = await api('/api/patients', {method:'POST', body:{
+      mrn, name, year_of_birth: Number.isFinite(yob) ? yob : null}});
+    $('#patient-state').innerHTML = errBox(
+      `Ready: ${state.patient.name} (${state.patient.mrn})`, true);
+    $('#btn-screen').disabled = false;
+    loadHistory();
+  } catch (e) { $('#patient-state').innerHTML = errBox(e.message); }
+});
+
+async function loadHistory() {
+  if (!state.patient) return;
+  try {
+    const h = await api(`/api/patients/${state.patient.id}/history`);
+    if (!h.timeline.length) { $('#card-history').hidden = true; return; }
+    $('#card-history').hidden = false;
+    $('#history').innerHTML =
+      `<thead><tr><th>Date</th><th>Eye</th><th class="n">Machine</th>
+        <th class="n">Final</th><th>Urgency</th></tr></thead><tbody>` +
+      h.timeline.map(t => `<tr>
+        <td class="mono">${new Date(t.captured_at).toLocaleDateString('en-IN')}</td>
+        <td>${t.eye}</td>
+        <td class="n" style="color:${t.grade != null ? GC[t.grade] : 'inherit'}">${t.grade ?? '—'}</td>
+        <td class="n" style="color:${t.final_grade != null ? GC[t.final_grade] : 'inherit'}">${t.final_grade ?? '—'}</td>
+        <td>${t.urgency ? `<span class="pill ${t.urgency}">${t.urgency}</span>` : '—'}</td>
+      </tr>`).join('') + '</tbody>';
+    $('#progression').innerHTML = h.progression_note
+      ? `<p class="hint" style="${h.progressed ? 'color:var(--bad);font-weight:500' : ''}">
+           ${esc(h.progression_note)}</p>` : '';
+  } catch { $('#card-history').hidden = true; }
+}
+
+/* ------------------------------------------------ screening */
+$('#btn-screen').onclick = () => busy($('#btn-screen'), 'Screening', async () => {
+  const f = $('#file').files[0];
+  if (!f) { $('#results').innerHTML = errBox('Choose a fundus image first.'); return; }
+  showPending();
+  const fd = new FormData();
+  fd.append('patient_id', state.patient.id);
+  fd.append('eye', $('#eye').value);
+  fd.append('client_uuid', crypto.randomUUID());
+  fd.append('file', f);
+  try {
+    state.screening = await api('/api/screenings', {method:'POST', body: fd, form:true});
+    renderScreening(state.screening, f);
+    loadHistory();
+  } catch (e) {
+    $('#results').innerHTML = errBox(e.message);
+    $('#canvas').innerHTML = '<div class="empty"><h4>Not analysed</h4></div>';
+  }
+});
+
+function showPending() {
   $('#canvas').innerHTML = '<div class="sk sk-img"></div>';
   $('#legend').innerHTML = '';
-  $('#card-lesions').hidden = true;
   $('#results').innerHTML = `<div class="panel"><div class="panel-b">
     <div class="sk" style="height:15px;width:42%"></div>
     <div class="sk" style="height:40px;margin-top:14px"></div>
     <div class="sk" style="height:15px;width:66%;margin-top:18px"></div>
-    <div class="sk" style="height:15px;width:52%;margin-top:9px"></div>
-    <div class="sk" style="height:15px;width:74%;margin-top:9px"></div>
-  </div></div>`;
+    <div class="sk" style="height:15px;width:52%;margin-top:9px"></div></div></div>`;
 }
 
-/* ---------------- actions ---------------- */
-$('#btn-demo').onclick = async () => {
-  const f = new FormData();
-  f.append('grade', $('#grade').value);  f.append('seed', $('#seed').value);
-  f.append('blur',  $('#blur').value);   f.append('vignette', $('#vig').value);
-  f.append('glare', $('#glare').value);  f.append('exposure', $('#exp').value);
-  f.append('force', $('#force').checked);
-  showPending();
-  try { render(await post('/api/demo', f, $('#btn-demo'), 'Screening')); }
-  catch (e) { $('#results').innerHTML = errorCard(e.message); $('#canvas').innerHTML = ''; }
-};
-
-$('#btn-upload').onclick = async () => {
-  const file = $('#file').files[0];
-  if (!file) { $('#results').innerHTML = errorCard('Choose an image file first.'); return; }
-  const f = new FormData(); f.append('file', file); f.append('force', $('#force').checked);
-  showPending();
-  try { render(await post('/api/screen', f, $('#btn-upload'), 'Analysing')); }
-  catch (e) { $('#results').innerHTML = errorCard(e.message); $('#canvas').innerHTML = ''; }
-};
-
-/* ---------------- render ---------------- */
-const TABS = { input:'Original', overlay:'Lesion overlay', vessels:'Vasculature', heatmap:'Network attention' };
-const LEGEND = [['MA','Microaneurysm','#f0503c'],['HEM','Haemorrhage','#a01e28'],
-                ['EX','Hard exudate','#f0d228'],['CWS','Cotton-wool spot','#5ac8c8']];
-let current = null, activeTab = 'overlay';
-
-function render(r){
-  current = r;
-  const keys = Object.keys(TABS).filter(k => r.images && r.images[k]);
-  if (!keys.includes(activeTab)) activeTab = keys.includes('overlay') ? 'overlay' : keys[0];
-
-  $('#segbar').innerHTML = keys.map(k =>
-    `<button role="tab" data-k="${k}" aria-selected="${k === activeTab}">${TABS[k]}</button>`).join('');
-  $('#segbar').querySelectorAll('button').forEach(b =>
-    b.onclick = () => { activeTab = b.dataset.k; render(current); });
-
-  $('#canvas').innerHTML = keys.length
-    ? `<img src="${r.images[activeTab]}" alt="${TABS[activeTab]}">`
-    : '<div class="empty"><h4>No image returned</h4></div>';
-
-  if (activeTab === 'overlay' && r.graded) {
-    $('#legend').innerHTML = LEGEND.map(([k, n, c]) =>
-      `<span class="it"><i class="ring" style="border-color:${c}"></i>${n}
-        <b>${r.lesion_counts[k] ?? 0}</b></span>`).join('');
-  } else if (activeTab === 'heatmap') {
-    $('#legend').innerHTML = '<span class="it">Warm regions drew the strongest network attention — compare against the lesion overlay.</span>';
-  } else if (activeTab === 'vessels') {
-    $('#legend').innerHTML = '<span class="it">Green marks segmented vasculature, used to judge dark lesions rather than erase them.</span>';
-  } else { $('#legend').innerHTML = ''; }
-
-  renderResults(r);
-  renderLesions(r);
-}
-
-function panel(step, title, body, i){
+function panel(step, title, body, i=0) {
   return `<div class="panel rise" style="--i:${i}">
     <div class="panel-h">${step ? `<span class="step">${step}</span>` : ''}<h3>${title}</h3></div>
     <div class="panel-b">${body}</div></div>`;
 }
 
-function renderResults(r){
-  const q = r.quality;
+function renderScreening(sc, file) {
+  if (file) {
+    const url = URL.createObjectURL(file);
+    $('#canvas').innerHTML = `<img src="${url}" alt="Fundus capture">`;
+    $('#segbar').innerHTML = '';
+  }
+  $('#legend').innerHTML = sc.lesion_counts
+    ? [['MA','Microaneurysm','#f0503c'],['HEM','Haemorrhage','#a01e28'],
+       ['EX','Hard exudate','#f0d228'],['CWS','Cotton-wool spot','#5ac8c8']]
+      .map(([k,n,c]) => `<span class="it"><i class="ring" style="border-color:${c}"></i>${n}
+        <b>${sc.lesion_counts[k] ?? 0}</b></span>`).join('') : '';
+
+  const q = sc.quality_passed;
   let html = panel('01', 'Image quality gate', `
     <div class="readout">
-      <div class="score" style="color:${q.passed ? 'var(--ok)' : 'var(--bad)'}">${q.score}</div>
-      <div class="meta">
-        <span class="pill ${q.passed ? 'pass' : 'fail'}">${q.passed ? 'Pass' : 'Recapture'}</span>
-        <div class="s" style="margin-top:5px">Capture quality, 0&ndash;100</div>
+      <div class="score" style="color:${q ? 'var(--ok)' : 'var(--bad)'}">${sc.quality_score ?? '—'}</div>
+      <div style="padding-top:2px">
+        <span class="pill ${q ? 'pass' : 'fail'}">${q ? 'Pass' : 'Recapture'}</span>
+        <div class="hint" style="margin-top:5px">Capture quality, 0–100</div>
       </div>
     </div>
     <div class="track" style="margin-top:13px">
-      <i style="width:${q.score}%;background:${q.passed ? 'var(--ok)' : 'var(--bad)'}"></i></div>
-    <p class="hint" style="margin-top:11px">${esc(q.guidance)}</p>
-    ${q.failures.length ? `<div style="margin-top:9px">${q.failures.map(f =>
-      `<span class="kind" style="margin-right:5px">${esc(f)}</span>`).join('')}</div>` : ''}
-    <div class="rows" style="margin-top:14px">${Object.entries(q.metrics).map(([k, v]) =>
-      `<div class="row"><span class="k">${esc(k.replace(/_/g, ' '))}</span>
-       <span class="v">${(+v).toFixed(3)}</span></div>`).join('')}</div>`, 0);
+      <i style="width:${sc.quality_score ?? 0}%;background:${q ? 'var(--ok)' : 'var(--bad)'}"></i></div>
+    <p class="hint">${esc(sc.quality_guidance)}</p>
+    ${(sc.quality_failures || []).map(f => `<span class="kind" style="margin-right:5px">${esc(f)}</span>`).join('')}`, 0);
 
-  if (!r.graded) {
+  if (sc.status === 'quality_failed') {
     html += panel('', 'Not graded', `
       <p style="font-size:13px;line-height:1.6;color:var(--ink-2)">
-        The capture failed the quality gate, so no grade was produced. In the field this is
-        the correct outcome — the ASHA worker recaptures while the patient is still present,
-        and no clinical decision rests on an unreadable photograph.</p>
-      <p class="hint">Tick <b>Grade even if quality fails</b> to override and inspect the
-        pipeline anyway.</p>`, 1);
+        The capture failed the quality gate, so no grade was produced. Retake the
+        photograph now, while the patient is still present — no clinical decision
+        should rest on an unreadable image.</p>`, 1);
     $('#results').innerHTML = html;
     return;
   }
 
-  const fused = r.graders.find(g => g.source === 'fused') || {};
-  const probs = fused.probabilities || [];
   html += panel('02', 'Severity grade', `
     <div class="readout">
-      <div class="score" style="color:${GC[r.grade]}">${r.grade}</div>
-      <div class="meta">
-        <div class="t">${esc(r.grade_name)}</div>
-        <div class="s">${(r.confidence * 100).toFixed(0)}% confidence &middot; ICDR scale</div>
+      <div class="score" style="color:${GC[sc.grade]}">${sc.grade}</div>
+      <div style="padding-top:2px">
+        <div style="font-weight:700;font-size:14.5px">ICDR grade ${sc.grade}</div>
+        <div class="hint">${((sc.confidence ?? 0)*100).toFixed(0)}% confidence ·
+          P(referable) ${((sc.referable_probability ?? 0)*100).toFixed(0)}%</div>
       </div>
     </div>
-    <div class="dist">${probs.map((p, i) =>
-      `<i style="width:${p * 100}%;background:${GC[i]}" title="Grade ${i}: ${(p * 100).toFixed(1)}%"></i>`).join('')}</div>
-    <div class="s" style="font-size:11.5px;color:var(--faint)">Probability mass across grades 0&ndash;4</div>
-    <div class="rows" style="margin-top:15px">${r.graders.map(g =>
-      `<div class="row"><span class="g" style="color:${GC[g.grade]}">${g.grade}</span>
-        <span class="k">${esc(g.source)}</span>
-        <span class="v" style="color:var(--muted)">${(g.confidence * 100).toFixed(0)}%</span></div>`).join('')}
-    </div>
-    ${r.ground_truth ? `<p class="hint">Synthetic ground truth: grade
-      <b class="mono">${r.ground_truth.grade}</b> &middot; MA ${r.ground_truth.counts.MA},
-      HEM ${r.ground_truth.counts.HEM}, EX ${r.ground_truth.counts.EX},
-      CWS ${r.ground_truth.counts.CWS}</p>` : ''}`, 1);
+    <div class="dist">${(sc.grade_distribution || []).map((p,i) =>
+      `<i style="width:${p*100}%;background:${GC[i]}"></i>`).join('')}</div>
+    <div class="hint" style="margin-top:0">Probability mass across grades 0–4</div>
+    <div class="rows" style="margin-top:14px">
+      <div class="row"><span class="k">Model version</span>
+        <span class="v">${esc(sc.model_version)}</span></div>
+      <div class="row"><span class="k">Pipeline</span>
+        <span class="v">${esc(sc.pipeline_version)}</span></div>
+    </div>`, 1);
 
-  const t = r.triage;
   html += panel('03', 'Referral triage', `
     <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap">
-      <span class="pill ${t.urgency}">${t.urgency}</span>
+      <span class="pill ${sc.urgency}">${esc(sc.urgency)}</span>
       <span style="font-weight:700;font-size:13.5px">Review within
-        <span class="mono">${t.days_to_review}</span> days</span>
+        <span class="mono">${sc.days_to_review}</span> days</span>
     </div>
-    <p style="margin-top:9px;font-size:13px;color:var(--ink-2)">${esc(t.action)}</p>
-    ${t.needs_human_review ? `<div class="err" style="margin-top:12px">
+    ${sc.needs_human_review ? `<div class="err" style="margin-top:12px">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <path d="M12 3l9 16H3z"/><path d="M12 9.5v4M12 16.5h.01"/></svg>
-      <div>Routed for mandatory human review.</div></div>` : ''}
-    <ul class="narr" style="margin-top:13px">${t.reasons.map(x =>
+      <div>Routed to the review queue for a clinician.</div></div>` : ''}
+    <ul class="narr" style="margin-top:13px">${(sc.triage_reasons || []).map(x =>
       `<li class="${/Escalated/.test(x) ? 'key' : ''}">${esc(x)}</li>`).join('')}</ul>`, 2);
 
-  const a = r.attention;
-  const good = a && a.verdict === 'attention_matches_lesions';
   html += panel('04', 'Why this result', `
-    <ul class="narr">${r.explanation.map(x => {
+    <ul class="narr">${(sc.explanation || []).map(x => {
       const alert = /Trust check FAILED|Caution/.test(x);
       const key = /^Assessment|^Measured findings|Macular involvement/.test(x);
       return `<li class="${alert ? 'alert' : (key ? 'key' : '')}">${esc(x)}</li>`;
-    }).join('')}</ul>
-    ${(a && a.lift != null) ? `
-      <div class="rows" style="margin-top:6px">
-        <div class="row"><span class="k">Attention corroboration</span>
-          <span class="pill ${good ? 'pass' : 'fail'}" style="animation:none">
-            ${esc(a.verdict.replace(/_/g, ' '))}</span></div>
-        <div class="row"><span class="k">Concentration on segmented lesions</span>
-          <span class="v">${a.lift}× chance</span></div>
-      </div>` : ''}
-    ${contributions(r)}`, 3);
+    }).join('')}</ul>`, 3);
 
-  html += panel('', 'Latency', `
-    <div class="rows">${Object.entries(r.timing_ms).map(([k, v]) =>
-      `<div class="row"><span class="k">${esc(k)}</span><span class="v">${v} ms</span></div>`).join('')}</div>
-    <p class="hint">Budget is a decision while the patient is still in the chair.</p>`, 4);
-
+  if (sc.latency_ms) {
+    html += panel('', 'Latency', `<div class="rows">${
+      Object.entries(sc.latency_ms).map(([k,v]) =>
+        `<div class="row"><span class="k">${esc(k)}</span><span class="v">${v} ms</span></div>`).join('')
+    }</div>`, 4);
+  }
   $('#results').innerHTML = html;
 }
 
-function contributions(r){
-  const gbm = r.graders.find(g => g.source === 'feature_gbm');
-  const cs = gbm && gbm.detail && gbm.detail.contributions;
-  if (!cs || !cs.length) return '';
-  const mx = Math.max(...cs.map(c => Math.abs(c.effect)));
-  return `<div style="margin-top:15px">
-    <div class="s" style="font-size:11.5px;color:var(--faint);margin-bottom:9px">
-      Feature contributions &mdash; drop in predicted probability if replaced by its typical value</div>
-    ${cs.map(c => `<div class="contrib">
-      <span class="n" title="${esc(c.label)}">${esc(c.label)}</span>
-      <span class="t"><i style="width:${Math.abs(c.effect) / mx * 100}%;
-        background:${c.effect >= 0 ? 'var(--accent)' : 'var(--bad)'}"></i></span>
-      <span class="v">${c.effect >= 0 ? '+' : ''}${c.effect.toFixed(3)}</span></div>`).join('')}
-  </div>`;
+/* ------------------------------------------------ review queue */
+$('#btn-refresh-queue').onclick = loadQueue;
+
+async function loadQueue() {
+  const body = $('#queue-body');
+  body.innerHTML = '<div class="sk" style="height:60px"></div>';
+  try {
+    const items = await api('/api/review/queue');
+    if (!items.length) {
+      body.innerHTML = `<div class="empty"><h4>Queue is clear</h4>
+        <p>No cases are waiting for a clinician right now.</p></div>`;
+      return;
+    }
+    body.innerHTML = items.map((it, i) => `
+      <div class="qitem" data-id="${it.screening.id}" style="cursor:pointer">
+        <div><span class="pill ${it.screening.urgency}">${esc(it.screening.urgency)}</span></div>
+        <div>
+          <div class="who2">${esc(it.patient_name)}</div>
+          <div class="sub">${esc(it.patient_mrn)} · ${it.screening.eye} ·
+            grade ${it.screening.grade ?? '—'}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="sub ${it.breaching ? 'breach' : ''}">${it.waiting_days} d waiting</div>
+          ${it.breaching ? '<div class="sub breach">past window</div>' : ''}
+        </div>
+      </div>`).join('');
+    body.querySelectorAll('.qitem').forEach(el =>
+      el.onclick = () => openCase(items.find(i => i.screening.id === el.dataset.id)));
+  } catch (e) { body.innerHTML = errBox(e.message); }
 }
 
-function renderLesions(r){
-  const card = $('#card-lesions');
-  if (!r.graded || !r.lesions.length) { card.hidden = true; return; }
-  card.hidden = false;
-  const rows = r.lesions.slice().sort((a, b) => b.area_um2 - a.area_um2);
-  $('#lesiontab').innerHTML =
-    `<thead><tr><th>Type</th><th class="n">Area µm²</th><th class="n">Major µm</th>
-      <th class="n">Circularity</th><th class="n">To fovea µm</th></tr></thead><tbody>` +
-    rows.map(l => `<tr>
-      <td><span class="kind">${l.kind}</span></td>
-      <td class="n">${num(Math.round(l.area_um2))}</td>
-      <td class="n">${l.major_axis_um.toFixed(0)}</td>
-      <td class="n">${l.circularity.toFixed(2)}</td>
-      <td class="n">${num(Math.round(l.dist_to_macula_um))}</td></tr>`).join('') + '</tbody>';
+function openCase(item) {
+  const sc = item.screening;
+  const canSign = state.user.role === 'ophthalmologist';
+  $('#queue-detail').innerHTML = panel('', `${esc(item.patient_name)} · ${sc.eye}`, `
+    <div class="readout">
+      <div class="score" style="color:${GC[sc.grade]}">${sc.grade ?? '—'}</div>
+      <div style="padding-top:2px">
+        <span class="pill ${sc.urgency}">${esc(sc.urgency)}</span>
+        <div class="hint" style="margin-top:5px">${esc(sc.model_version)} ·
+          ${((sc.confidence ?? 0)*100).toFixed(0)}% confidence</div>
+      </div>
+    </div>
+    <ul class="narr" style="margin-top:14px">${(sc.explanation || []).map(x =>
+      `<li>${esc(x)}</li>`).join('')}</ul>
+    <div class="rule"></div>
+    ${canSign ? `
+      <div class="field"><label class="f" for="corrected">Your grade</label>
+        <select id="corrected">${[0,1,2,3,4].map(g =>
+          `<option value="${g}" ${g === sc.grade ? 'selected' : ''}>Grade ${g}</option>`).join('')}</select></div>
+      <div class="field"><label class="f" for="notes">Notes</label>
+        <input type="text" id="notes" placeholder="Optional"></div>
+      <button class="btn" id="btn-sign" style="margin-top:14px">Sign off</button>
+      <div id="sign-state"></div>`
+    : `<p class="hint">Your role can read this queue but not sign off. Clinical
+         sign-off is restricted to ophthalmologists.</p>`}`);
+
+  const signBtn = $('#btn-sign');
+  if (signBtn) signBtn.onclick = () => busy(signBtn, 'Recording', async () => {
+    try {
+      await api(`/api/review/${sc.id}`, {method:'POST', body:{
+        corrected_grade: parseInt($('#corrected').value, 10),
+        notes: $('#notes').value || null}});
+      $('#sign-state').innerHTML = errBox('Decision recorded.', true);
+      loadQueue();
+    } catch (e) { $('#sign-state').innerHTML = errBox(e.message); }
+  });
 }
 
-/* ---------------- simulation ---------------- */
-$('#btn-sim').onclick = async () => {
-  const f = new FormData();
-  f.append('phcs', $('#s-phcs').value);
-  f.append('ophthalmologists', $('#s-ophth').value);
-  f.append('days', $('#s-days').value);
-  f.append('screenings_per_phc_per_day', $('#s-rate').value);
-  f.append('ai_sensitivity_referable', $('#s-sens').value);
-  f.append('ai_specificity_referable', $('#s-spec').value);
-  $('#simout').innerHTML = `<div class="panel"><div class="panel-b">
-    <div class="sk" style="height:70px"></div>
-    <div class="sk" style="height:15px;width:58%;margin-top:16px"></div>
-    <div class="sk" style="height:15px;width:44%;margin-top:9px"></div></div></div>`;
-  try { renderSim(await post('/api/simulate', f, $('#btn-sim'), 'Simulating')); }
-  catch (e) { $('#simout').innerHTML = errorCard(e.message); }
-};
+/* ------------------------------------------------ simulation */
+$('#btn-sim').onclick = () => busy($('#btn-sim'), 'Simulating', async () => {
+  const qs = new URLSearchParams({
+    phcs: $('#s-phcs').value, ophthalmologists: $('#s-ophth').value,
+    days: $('#s-days').value, screenings_per_phc_per_day: $('#s-rate').value,
+    ai_sensitivity_referable: $('#s-sens').value,
+    ai_specificity_referable: $('#s-spec').value});
+  $('#simout').innerHTML = '<div class="panel"><div class="panel-b"><div class="sk" style="height:70px"></div></div></div>';
+  try { renderSim(await api('/api/programme/simulate?' + qs)); }
+  catch (e) { $('#simout').innerHTML = errBox(e.message); }
+});
 
-function renderSim(d){
+function renderSim(d) {
   const s = d.summary;
-  const metric = (v, l) => `<div class="metric"><div class="v">${v}</div><div class="l">${l}</div></div>`;
-
-  let html = `<div class="metrics rise" style="--i:0">
+  const metric = (v,l) => `<div class="metric"><div class="v">${v}</div><div class="l">${l}</div></div>`;
+  let html = `<div class="metrics rise">
     ${metric(num(s.screened), 'patients screened')}
-    ${metric((s.read_workload_reduction * 100).toFixed(0) + '%', 'specialist reading avoided')}
+    ${metric((s.read_workload_reduction*100).toFixed(0)+'%', 'specialist reading avoided')}
     ${metric(num(s.missed_referable_ai), 'referable cases missed')}
-    ${metric(num(s.false_referrals_ai), 'false referrals generated')}
-  </div>`;
+    ${metric(num(s.false_referrals_ai), 'false referrals generated')}</div>`;
 
-  const W = { emergency:7, urgent:28, soon:180, routine:365 };
-  const bar = (v, col) => v == null
-    ? '<div class="bar"><div class="n">—</div></div>'
-    : `<div class="bar"><div class="t"><i style="width:${v * 100}%;background:${col}"></i></div>
-       <div class="n">${(v * 100).toFixed(0)}%</div></div>`;
-
+  const W = {emergency:7, urgent:28, soon:180, routine:365};
+  const bar = (v,col) => v == null ? '<div class="bar"><div class="n">—</div></div>'
+    : `<div class="bar"><div class="t"><i style="width:${v*100}%;background:${col}"></i></div>
+       <div class="n">${(v*100).toFixed(0)}%</div></div>`;
   const rows = ['emergency','urgent','soon','routine'].map(k => {
     const a = d.ai.within_window[k], m = d.manual.within_window[k];
     if (a == null && m == null) return '';
     return `<div class="cmp"><div class="lbl">${k}<s>within ${W[k]} d</s></div>
-      ${bar(a, 'var(--ok)')}${bar(m, 'var(--bad)')}</div>`;
+      ${bar(a,'var(--ok)')}${bar(m,'var(--bad)')}</div>`;
   }).join('');
 
   html += `<div class="panel rise" style="--i:1;margin-top:18px">
     <div class="panel-h"><h3>Reaching a specialist inside the clinical window</h3></div>
     <div class="panel-b">
-      <div class="cmp" style="padding-bottom:6px">
-        <div></div><div class="head">AI triage</div><div class="head">Manual reading</div></div>
+      <div class="cmp" style="padding-bottom:6px"><div></div>
+        <div class="head">AI triage</div><div class="head">Manual reading</div></div>
       ${rows}
-      <p class="hint">Patients still queued when the run ended are counted as breaches rather
-        than excluded — otherwise an arm that never reaches them scores a perfect 100%.</p>
-    </div></div>`;
+      <p class="hint">Patients still queued when the run ended count as breaches
+        rather than being excluded — otherwise an arm that never reaches them
+        scores a perfect 100%.</p></div></div>`;
 
-  const kv = (k, v) => `<div class="row"><span class="k">${k}</span><span class="v">${v}</span></div>`;
+  const kv = (k,v) => `<div class="row"><span class="k">${k}</span><span class="v">${v}</span></div>`;
   html += `<div class="panel rise" style="--i:2">
     <div class="panel-h"><h3>Specialist workload &amp; backlog</h3></div>
     <div class="panel-b"><div class="rows">
-      ${kv('Image reads required — AI arm', num(s.specialist_reads_ai))}
-      ${kv('Image reads required — manual arm', num(s.specialist_reads_manual))}
+      ${kv('Image reads required — AI', num(s.specialist_reads_ai))}
+      ${kv('Image reads required — manual', num(s.specialist_reads_manual))}
       ${kv('Mean wait, urgent + emergency — AI', (s.urgent_mean_wait_days_ai ?? '—') + ' d')}
       ${kv('Mean wait, urgent + emergency — manual', (s.urgent_mean_wait_days_manual ?? '—') + ' d')}
       ${kv('Backlog at close — AI', num(s.final_backlog_ai))}
-      ${kv('Backlog at close — manual', num(s.final_backlog_manual))}
-    </div>
-    <p class="hint">The AI arm still carries a backlog. The difference is what is in it:
-      routine patients who can safely wait, rather than the emergency cases stuck behind
-      them in the manual arm.</p></div></div>`;
-
+      ${kv('Backlog at close — manual', num(s.final_backlog_manual))}</div>
+    <p class="hint">The AI arm still carries a backlog. The difference is what is
+      in it: routine patients who can safely wait, rather than the emergency
+      cases stuck behind them in the manual arm.</p></div></div>`;
   $('#simout').innerHTML = html;
 }
+
+/* ------------------------------------------------ boot */
+(function boot() {
+  try {
+    const saved = localStorage.getItem('drishti.session');
+    if (saved) { const tok = JSON.parse(saved); state.token = tok.access_token;
+                 state.user = tok; showApp(); return; }
+  } catch {}
+  loadHealth();
+})();
 </script>
 </body>
 </html>

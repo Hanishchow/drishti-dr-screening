@@ -1,5 +1,14 @@
 # Engineering notes
 
+> **Provenance.** These defects were found while the pipeline was being
+> developed against a synthetic fundus generator, which has since been removed
+> in favour of the real corpora (IDRiD, APTOS, EyePACS, Messidor-2). The
+> *defects and fixes below are properties of the code and remain current*; the
+> measured deltas quoted are from that development period and are retained
+> because they show the size of each effect, not as clinical figures. Real
+> lesion-level numbers come from `python -m dr.eval_lesions` against IDRiD's
+> pixel masks.
+
 Nine defects found during development that were invisible to inspection and only
 surfaced under measurement. Each is recorded with its symptom, cause, fix and
 the measured effect, because each is a trap the next person to touch this

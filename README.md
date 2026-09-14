@@ -4,7 +4,7 @@ Prototype for **SIH 2026 · PS 26038 (MathWorks)** — *"Design a retinal image
 analysis pipeline for diabetic retinopathy screening and triage, complete with
 explainability and district-scale telemedicine simulation."*
 
-> **India's DR problem in one line:** 77M+ adults live with diabetes and about
+> **The problem in one line:** 77M+ Indian adults live with diabetes and about
 > one in three will develop diabetic retinopathy, but rural India has roughly
 > one ophthalmologist per 100,000 people. The bottleneck is not diagnosis — it
 > is *specialist attention*. This system is built to spend that attention well.
@@ -13,32 +13,51 @@ explainability and district-scale telemedicine simulation."*
 
 ## What it does
 
-An ASHA worker photographs a patient's retina on a low-cost fundus camera. In
-well under a second the system:
+An ASHA worker photographs a patient's retina on a low-cost fundus camera. The
+system then:
 
-1. **Gates image quality** and tells the worker exactly what to fix, while the
-   patient is still in the chair.
+1. **Gates image quality** and says exactly what to fix, while the patient is
+   still in the chair. This runs first and short-circuits, so an unusable
+   capture costs milliseconds instead of a GPU slot.
 2. **Segments lesions** — microaneurysms, haemorrhages, hard exudates,
    cotton-wool spots — with sizes in microns and distance to the fovea.
-3. **Grades severity** on the ICDR 0–4 scale using three independent graders.
-4. **Explains itself** three ways: a pixel-exact lesion overlay, a Grad-CAM
-   saliency map, and a narrative that cites measured numbers only.
-5. **Triages** the patient into a referral window, escalating on evidence the
-   grade alone does not capture.
-6. **Simulates the district programme** so the value is measured in patients
-   seen on time, not in accuracy points.
+3. **Grades severity** on the ICDR 0–4 scale, combining a deterministic
+   clinical rule grader with an ordinal CNN.
+4. **Explains itself** with a pixel-exact lesion overlay and a narrative that
+   cites only measured numbers.
+5. **Triages** into a referral window, escalating on evidence the grade alone
+   does not capture (exudates at the fovea are sight-threatening at any grade).
+6. **Routes uncertain cases to a human** and tracks them through a real
+   ophthalmologist queue until sign-off.
+7. **Simulates the district programme**, so value is measured in patients seen
+   on time rather than in accuracy points.
 
 ## The core design decision
 
-Most DR systems are a single CNN that outputs a grade. That is a black box, and
-a black box is exactly what a rural clinician will not act on.
+Most DR systems are a single CNN emitting a grade. That is a black box, and a
+black box is what a rural clinician will not act on.
 
-This system pairs a **learned grader** with a **deterministic morphological
-segmenter** that measures physical evidence, and then **checks them against each
-other**. If the CNN produces a severe grade while its attention sits somewhere
-the segmenter found no lesion, the case is flagged as *attention unexplained*
-and routed to a human. The machine is built to be able to say "do not trust me
-on this one" — which is what makes it trustworthy on the rest.
+This pairs a **learned ordinal grader** with a **deterministic morphological
+segmenter** that measures physical evidence, then **checks them against each
+other**. Disagreement, low confidence, or a failed quality gate routes the case
+to a human rather than issuing a confident answer. The system is built to be
+able to say *"do not trust me on this one"* — which is what makes it
+trustworthy on the rest.
+
+Two further choices follow from the clinical setting:
+
+**Ordinal, not 5-way softmax.** A softmax head treats grade 0 and grade 4 as
+merely different, so confusing them costs what confusing 3 and 4 costs. The
+CORAL head learns cumulative units ("is the grade > k?") sharing one weight
+vector, which makes the predicted probabilities monotonic by construction and
+yields a calibrated `P(grade ≥ 2)` — exactly the referral decision.
+
+**Fusion escalates rather than averages.** A confident severe vote from any
+grader carries forward. The system over-refers rather than missing disease, and
+the district simulation is where that trade is priced — its false referrals are
+counted against clinic capacity, not hidden.
+
+---
 
 ## Quick start
 
@@ -47,113 +66,111 @@ pip install -r requirements.txt
 ```
 
 ```bash
-python train.py --cnn --pretrained
-```
-
-Omit `--cnn` to train only the feature grader in about a minute; the pipeline
-runs correctly without a CNN, it simply omits Grad-CAM from the report.
-
-```bash
-uvicorn api.server:app --port 8000
-```
-
-Then open <http://localhost:8000>. No dataset needed — the **Synthetic case**
-panel generates labelled retinas on demand, with sliders for blur, uneven
-illumination, glare and exposure so the quality gate can be exercised live.
-
-Other entry points:
-
-```bash
-python -m sim.district
+export DRISHTI_SECRET_KEY=$(python -c "import secrets;print(secrets.token_urlsafe(48))")
 ```
 
 ```bash
-python eval_lesions.py --n 8
+export DRISHTI_BOOTSTRAP_ADMIN_EMAIL=admin@district.gov.in DRISHTI_BOOTSTRAP_ADMIN_PASSWORD=change-me-now
 ```
 
 ```bash
-python -m pytest tests -q
+uvicorn server.app:app --port 8000
 ```
 
-## Measured results
+Open <http://localhost:8000> and sign in with the bootstrap admin. Capture,
+quality gating, records, the review queue and the district simulation all work
+immediately; **grading returns a clear 503 until a model is trained**, because
+this repo ships no weights and invents no data.
 
-All figures are on held-out synthetic data (disjoint generator seeds).
+---
 
-| Stage | Metric | Result |
+## Training on real data
+
+The corpora are licence-restricted and are never committed. Point
+`DR_DATA_ROOT` at them (on Kaggle they mount under `/kaggle/input`
+automatically).
+
+| Corpus | Size | Purpose |
 |---|---|---|
-| Quality gate | clean images falsely rejected | 0 / 40 |
-| Quality gate | blur, shadow, glare, exposure faults | all detected, correct guidance |
-| Anatomy | optic disc localisation, median error | **4.5 px** (~115 µm) |
-| Anatomy | fovea localisation, median error | **10.2 px** (~260 µm) |
-| Lesion detection | dark lesions (MA + haemorrhage) F1 | **0.77** (P 0.79 / R 0.75) |
-| Lesion detection | bright lesions (exudate + CWS) F1 | **0.76** (P 0.80 / R 0.72) |
-| Grading | exact ICDR grade (all three graders fused) | **78.3%** |
-| Grading | within ±1 grade | **100%** |
-| Grading | **referable DR (≥2) sensitivity** | **1.000** |
-| Grading | referable DR (≥2) specificity | **0.833** |
-| Explainability | attention/lesion agreement, mean lift | **2.62×** chance |
-| Explainability | cases flagged "attention unexplained" | 10 / 60 |
-| Latency | rules + features (no CNN) | ~680 ms CPU |
-| Latency | full pipeline incl. CNN + Grad-CAM | ~1.3 s CPU |
+| **IDRiD** | 516 graded, 81 with pixel masks | The only public set with per-lesion masks — the only way to score the segmenter's "where" channel |
+| **APTOS 2019** | 3,662 | Indian population (Aravind); closest public proxy to the deployment setting |
+| **EyePACS** | 88,702 | Scale, needed for a CNN that generalises |
+| **Messidor-2** | 1,748 | Held out entirely as external validation; never trained on |
 
-Sensitivity is the number that matters for screening, and it is deliberately
-bought at the cost of specificity: fusion escalates to the most severe grade any
-grader asserts confidently, so the system over-refers rather than miss disease.
-The district simulation is where that trade is priced — the false referrals it
-generates are counted against clinic capacity, not hidden.
+```bash
+python -m dr.train --datasets aptos idrid --external messidor2 --size 512 --backbone tf_efficientnet_b3_ns
+```
 
-For reference, the individual graders on the same held-out set:
+On Kaggle, cache the resized images once — full-resolution JPEG decoding, not
+the GPU, is what makes an EyePACS epoch slow:
 
-| Grader | Exact | Referable sens / spec |
+```bash
+python -m dr.train --datasets eyepacs aptos --build-cache --cache-dir /kaggle/working/cache
+```
+
+Training writes `artifacts/grader.onnx` plus `grader.json` (thresholds,
+backbone, input size). The server loads those; it never imports the training
+code.
+
+Score the segmenter against real lesion masks:
+
+```bash
+python -m dr.eval_lesions --data-root /path/to/datasets
+```
+
+### What the training code guards against
+
+* **Patient-grouped splits.** EyePACS carries both eyes per patient and the two
+  are highly correlated; a random image split validates partly on memorisation.
+  `assert_no_patient_leakage` fails the run rather than reporting an inflated
+  score.
+* **Grade-stratified folds.** Grades 3–4 are a few percent of these corpora, so
+  an unstratified fold can contain almost no severe disease and produce a
+  meaningless sensitivity estimate.
+* **QWK for model selection, not loss.** Loss keeps improving on the majority
+  grade long after the clinically useful ranking has stopped.
+* **Thresholds fitted on validation only**, saved with the weights, and forced
+  apart by a minimum separation — an unconstrained fit collapses the cut-points
+  into a cluster that maximises kappa on one split while making grades 1–3
+  unreachable for every future patient.
+* **Collapsed-model refusal.** Trained from scratch on a small cohort the CNN
+  converges to predicting one class for everything. That is worse than no CNN:
+  fusion drags every grade toward it while Grad-CAM produces convincing-looking
+  saliency that means nothing. `train.py` refuses to save it. Use
+  `--pretrained`.
+
+---
+
+## Deployment
+
+```bash
+cd deploy && cp .env.example .env    # fill in the secrets, then:
+docker compose up -d
+```
+
+One image serves both roles, so an edge node cannot drift to a different
+pipeline version than the district it syncs into.
+
+| | District | PHC edge |
 |---|---|---|
-| ICDR rules (no training at all) | 42.7% | 0.956 / 0.833 |
-| Feature GBM | 86.7% | 1.000 / 0.900 |
-| EfficientNet-B0 | 73.3% | 1.000 / 1.000 |
-| **Fused** | 78.3% | **1.000** / 0.833 |
+| Database | Postgres | SQLite, single file |
+| Inference | GPU, batched | CPU, batch size 1 |
+| Network | inbound | none required |
 
-Fused exact accuracy is *lower* than the feature grader alone, and that is the
-design working rather than failing. The CNN confuses grades 3 and 4, and
-escalation carries the more severe vote forward — so the fused system
-over-grades some severe cases while never under-grading one. Within ±1 grade it
-is 100%, and referable sensitivity is perfect.
+```bash
+docker compose -f edge-compose.yml up -d      # at each PHC
+```
 
-The three graders also fail in usefully different places. The CNN is weakest at
-grade 0 vs 1, which is a microaneurysm-counting problem the morphological
-channel is built for; the morphological channel cannot see neovascularisation at
-all, which the CNN can learn. The rule grader never predicts grade 4, and that
-is correct rather than a defect — proliferative DR is defined by
-neovascularisation, and the rule grader declares that limit explicitly in
-`cannot_assess` instead of guessing.
+```bash
+python scripts/edge_sync.py --district https://district.example.in --email edge-7@svc.gov.in --password ...
+```
 
-**The CNN will not train from scratch on a cohort this small.** Without
-ImageNet initialisation it collapses to predicting a single class for every
-image — 20% accuracy, and far worse than having no CNN at all, since fusion
-would drag every grade toward that class while Grad-CAM produced
-convincing-looking saliency that meant nothing. `train.py` now refuses to save a
-collapsed model. Use `--pretrained`.
+The edge keeps screening while the link is down. `client_uuid` is the
+idempotency key end to end, so a batch retried over a bad link is deduplicated
+rather than creating a second clinical record, and records are marked synced
+only after the district confirms.
 
-District simulation, 25 PHCs and **2 ophthalmologists** over 180 days
-(46,222 patients screened):
-
-| | AI triage | Manual reading |
-|---|---|---|
-| Specialist image reads needed | 3,857 | 27,900 |
-| Emergency cases seen within 7 days | **100%** | 9.9% |
-| Urgent cases seen within 28 days | **100%** | 37.6% |
-| Mean wait, urgent + emergency | **0.0 days** | 36.6 days |
-| Backlog at end | 5,941 (routine) | 18,600 (all grades) |
-
-The AI arm still has a backlog. The difference is *what is in it*: routine
-patients who can safely wait, rather than the emergency cases stuck behind them
-in the manual arm.
-
-> **Scope note.** These numbers validate that the pipeline works end to end;
-> they are **not clinical accuracy claims**. The generator is an approximation
-> of retinal appearance, not a substitute for EyePACS/APTOS/IDRiD/Messidor.
-> `data/synth.py` explains why it ships anyway: it provides pixel-level lesion
-> ground truth that grade-only public datasets do not, and it makes the repo
-> runnable with zero download. Retrain on real data before quoting any figure
-> as clinical.
+---
 
 ## Architecture
 
@@ -161,69 +178,89 @@ in the manual arm.
  fundus image
       |
       v
- [quality.py]  focus / illumination / FOV / exposure  --fail--> recapture guidance
+ [core/quality.py]  focus / illumination / FOV / exposure  --fail--> recapture guidance
       |
       v
- [preprocess.py]  FOV crop, CLAHE, illumination flattening
-      |            (records its crop transform so annotations can be replayed)
+ [core/preprocess.py]  FOV crop, CLAHE, illumination flattening
+      |                (records its crop transform so annotations can be replayed)
       v
- [lesions.py]  multi-scale top-hat, vessel & disc suppression
-      |         -> per-lesion class, area in um2, axes, distance to fovea
+ [core/lesions.py]  multi-scale top-hat, vessel- and disc-aware
+      |             -> per-lesion class, area in um2, distance to fovea
       v
- [features.py]  23 clinically-named features
+ [core/features.py]  23 clinically-named features
       |
-      +--> [grade.rule_grade]   ICDR rules, no training
-      +--> [grade.FeatureGrader] gradient boosting + local attributions
-      +--> [grade.CnnGrader]     EfficientNet-B0 + Grad-CAM
-      |
-      v
- [grade.fuse]  average, then escalate to the most severe confident vote
+      +--> [core/grade.rule_grade]  ICDR rules, no training
+      +--> [dr/model.py CORAL head] ordinal CNN, P(grade >= 2)
       |
       v
- [explain.py]  overlay + saliency + narrative + attention/lesion agreement
+ [core/grade.fuse]  average, then escalate to the most severe confident vote
       |
       v
- [triage.py]  referral window, escalations, human-review flags
+ [core/explain.py] overlay + narrative      [core/triage.py] window + escalation
       |
       v
- [sim/district.py]  what this does to a district, at scale
+ [server/] records, review queue, audit     [sim/district.py] programme impact
 ```
-
-## Layout
 
 | Path | Purpose |
 |---|---|
-| `core/quality.py` | Capture-time quality gate and recapture guidance |
-| `core/preprocess.py` | Normalisation and the replayable crop transform |
-| `core/lesions.py` | Multi-scale morphological lesion segmentation |
-| `core/features.py` | Lesion inventory → clinical feature vector |
-| `core/grade.py` | Rule, feature and CNN graders, plus fusion |
-| `core/explain.py` | Overlays, Grad-CAM, narrative, attention agreement |
-| `core/triage.py` | Referral pathway and escalation logic |
-| `core/pipeline.py` | End-to-end orchestration |
-| `data/synth.py` | Synthetic fundus generator with pixel ground truth |
-| `sim/district.py` | Discrete-event district telemedicine simulation |
-| `api/server.py`, `web/index.html` | FastAPI service and dashboard |
-| `train.py`, `eval_lesions.py`, `tune_lesions.py` | Training, evaluation, threshold sweeps |
-| `docs/matlab_mapping.md` | Stage-by-stage MATLAB port guide |
-| `docs/engineering_notes.md` | Seven measured defects, their causes and fixes |
+| `core/` | Quality gate, segmentation, features, rule grader, explanation, triage |
+| `dr/` | Datasets, splits, transforms, CORAL model, training, metrics, lesion eval |
+| `server/` | API: auth, records, review queue, batched inference, audit, sync |
+| `sim/` | District telemedicine simulation |
+| `web/` | Dashboard |
+| `deploy/`, `scripts/` | Docker, edge compose, edge sync client |
+| `docs/` | MATLAB port guide, engineering notes |
+
+### Clinical safety properties the backend enforces
+
+* A machine grade is **written once and never mutated**. An ophthalmologist's
+  correction is appended as a Review that supersedes it, so both survive and
+  disagreement stays measurable.
+* Every decision records **model version and thresholds**, so a past grade can
+  be reproduced after an update.
+* **Sign-off is ophthalmologist-only.** ASHA workers capture but cannot sign
+  off; district admins are excluded too, since administrative seniority is not
+  a clinical qualification.
+* The queue orders by **clinical urgency**, not arrival. Strict FIFO would put
+  a proliferative case behind last month's routine one.
+* An **append-only audit log** covers every grade, review and failed login.
+
+---
+
+## Tests
+
+```bash
+python -m pytest tests -q
+```
+
+73 pass, 2 skip without IDRiD. They need no GPU, no trained model and no
+Postgres. The suite asserts properties rather than numbers: that a featureless
+retina yields zero lesions (guarding against a percentile threshold, which
+makes "healthy" unrepresentable), that the crop transform round-trips, that
+splits never leak a patient, that an ASHA worker cannot sign off, that a
+retried sync batch deduplicates, and that a missing model degrades to a clear
+503 while still persisting the capture.
+
+`docs/engineering_notes.md` records nine defects found only under measurement,
+several of which would have passed code review — including a 6% coordinate
+misalignment in the *evaluator* that held lesion recall at 0.147 and made
+tightening the threshold look like an improvement.
 
 ## MATLAB
 
-PS 26038 is a MathWorks problem statement. Every operation in the pipeline was
-chosen to have a direct Image Processing Toolbox / Deep Learning Toolbox
-equivalent — `imbothat`, `adapthisteq`, `fibermetric`, `regionprops`,
-`gradCAM`, `efficientnetb0`. See [`docs/matlab_mapping.md`](docs/matlab_mapping.md)
-for the function-by-function correspondence and the three places where the port
-needs care.
+PS 26038 is a MathWorks problem statement. Every operator in `core/` was chosen
+to have a direct Image Processing Toolbox equivalent — `imbothat`,
+`adapthisteq`, `fibermetric`, `regionprops`, `gradCAM`.
+[`docs/matlab_mapping.md`](docs/matlab_mapping.md) gives the function-by-function
+correspondence and the three places the port needs care.
 
-## Using real data
+## Status
 
-Replace the generator with a real loader; nothing downstream changes:
+Working: quality gate, segmentation, rule grader, explanation, triage, records,
+auth, review queue, audit, offline sync, district simulation, deployment.
 
-```python
-X, y = build_feature_dataset(...)   # swap data.synth.cohort for your loader
-```
-
-Each image needs a BGR array and an ICDR grade 0–4. For lesion-level evaluation
-(`eval_lesions.py`) you also need per-class masks — IDRiD provides these.
+Requires training before clinical numbers exist: the CNN grader. No accuracy
+figure is quoted in this repo because none has been measured on real data yet —
+the synthetic generator that earlier stood in for a dataset has been removed
+precisely so that no synthetic number can be mistaken for a clinical one.

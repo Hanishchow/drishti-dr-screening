@@ -19,7 +19,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from .config import get_settings
 from .db import get_sessionmaker, init_db
 from .inference import PIPELINE_VERSION, ScreeningService, load_bundle
-from .routers import auth, clinical, review, sync
+from .routers import auth, clinical, programme, review, sync
 
 WEB_DIR = Path(__file__).resolve().parent.parent / "web"
 
@@ -87,6 +87,7 @@ app.include_router(auth.router)
 app.include_router(clinical.router)
 app.include_router(review.router)
 app.include_router(sync.router)
+app.include_router(programme.router)
 
 
 @app.get("/api/health")
