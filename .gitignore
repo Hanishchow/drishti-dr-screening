@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.log
+
+# Trained weights, ONNX exports and cached features: all reproducible from
+# train.py / dr/train.py, and too large to belong in git.
+models/
+artifacts/
+*.pt
+*.onnx
+*.joblib
+*.npz
+
+# Corpora are licence-restricted and must never be committed. Point
+# DR_DATA_ROOT at them instead.
+datasets/
+cache/
+
+.venv/
+.env

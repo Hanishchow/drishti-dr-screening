@@ -1,0 +1,13 @@
+numpy>=1.24
+opencv-python>=4.8
+scikit-image>=0.21
+scikit-learn>=1.3
+joblib>=1.3
+fastapi>=0.110
+uvicorn>=0.27
+python-multipart>=0.0.9
+# Optional: the CNN grader and Grad-CAM. The pipeline runs without it -- the
+# ICDR rule grader and the feature grader carry the system on CPU-only boxes.
+torch>=2.0
+torchvision>=0.15
+pytest>=7.4
