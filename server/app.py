@@ -90,10 +90,14 @@ app.include_router(review.router)
 app.include_router(sync.router)
 app.include_router(programme.router)
 
-# The dashboard's CSS and JS modules. Mounted rather than served per-route so
-# adding a module needs no server change.
-if WEB_DIR.exists():
-    app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
+# The dashboard's assets, mounted at the same paths a plain static server
+# would use. Serving them under /static instead would make index.html depend on
+# this server's mount point, and the identical file would 404 behind nginx or
+# any static host -- which is exactly what the frontend branch is.
+for _sub in ("css", "js"):
+    _dir = WEB_DIR / _sub
+    if _dir.exists():
+        app.mount(f"/{_sub}", StaticFiles(directory=_dir), name=_sub)
 
 
 @app.get("/api/health")
