@@ -31,6 +31,13 @@ class Settings(BaseSettings):
     bootstrap_admin_email: str | None = None
     bootstrap_admin_password: str | None = None
 
+    # Serve the dashboard without a sign-in screen. The API keeps enforcing
+    # roles exactly as before -- this only decides whether the browser may ask
+    # for a session unauthenticated. It is a demo/edge convenience and is
+    # refused outright on a district node by check().
+    open_access: bool = False
+    open_access_role: str = "district_admin"
+
     # --- inference ----------------------------------------------------------
     model_dir: str = "artifacts"
     model_name: str = "grader.onnx"
@@ -70,6 +77,15 @@ class Settings(BaseSettings):
                     "or export DRISHTI_ALLOW_INSECURE=1 for local development.")
         if self.access_token_minutes > 24 * 60:
             problems.append("access_token_minutes exceeds 24h; shorten it.")
+        if self.open_access and not self.is_edge:
+            # Open access on a district server would let any visitor obtain an
+            # ophthalmologist session and sign off on clinical grades. That is
+            # not a configuration mistake worth warning about -- it must stop
+            # the process.
+            problems.append(
+                "DRISHTI_OPEN_ACCESS is set on a district node. That would hand "
+                "clinical sign-off to anyone who can reach the page. Use it only "
+                "with DRISHTI_NODE_ROLE=edge, or on a local demo.")
         if problems:
             raise RuntimeError("unsafe configuration:\n  - " + "\n  - ".join(problems))
         return self

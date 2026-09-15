@@ -15,6 +15,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from .config import get_settings
 from .db import get_sessionmaker, init_db
@@ -88,6 +89,11 @@ app.include_router(clinical.router)
 app.include_router(review.router)
 app.include_router(sync.router)
 app.include_router(programme.router)
+
+# The dashboard's CSS and JS modules. Mounted rather than served per-route so
+# adding a module needs no server change.
+if WEB_DIR.exists():
+    app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
 
 
 @app.get("/api/health")

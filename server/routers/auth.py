@@ -1,6 +1,7 @@
 """Authentication and user administration."""
 from __future__ import annotations
 
+import secrets
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -38,6 +39,54 @@ def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get
     db.commit()
 
     s = get_settings()
+    return Token(access_token=create_access_token(user), role=user.role,
+                 user_id=user.id, full_name=user.full_name,
+                 expires_in_minutes=s.access_token_minutes)
+
+
+@router.post("/session", response_model=Token)
+def open_session(db: Session = Depends(get_db)):
+    """Mint a session without credentials, when open access is enabled.
+
+    This exists so the dashboard can drop its sign-in screen on a demo or an
+    edge node. It changes nothing about authorisation: the token carries a real
+    role and every endpoint keeps checking capabilities, so an open-access
+    session still cannot sign off a grade unless its role is ophthalmologist.
+
+    Settings.check() refuses to start a district node with open access on, so
+    this endpoint can only ever be reachable where that was a deliberate
+    choice.
+    """
+    s = get_settings()
+    if not s.open_access:
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN,
+            "Open access is disabled. Obtain a token from /api/auth/token with "
+            "credentials, or set DRISHTI_OPEN_ACCESS=1 on a demo/edge node.")
+
+    try:
+        role = Role(s.open_access_role)
+    except ValueError:
+        raise HTTPException(500, f"invalid open_access_role: {s.open_access_role!r}")
+
+    email = f"open-access@{s.node_id}.local"
+    user = db.scalar(select(User).where(User.email == email))
+    if user is None:
+        # A real row, so audit entries and reviews attribute to something that
+        # can be inspected later rather than to a null actor.
+        user = User(email=email, full_name=f"Open access ({role.value})",
+                    password_hash=hash_password(secrets.token_urlsafe(32)),
+                    role=role)
+        db.add(user)
+        db.flush()
+        record(db, None, "open_access_user_created", "user", user.id,
+               {"role": role.value, "node_id": s.node_id})
+    elif user.role != role:
+        user.role = role
+
+    user.last_login = datetime.now(timezone.utc)
+    record(db, user, "open_access_session", "user", user.id, {})
+    db.commit()
     return Token(access_token=create_access_token(user), role=user.role,
                  user_id=user.id, full_name=user.full_name,
                  expires_in_minutes=s.access_token_minutes)
