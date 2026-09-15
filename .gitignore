@@ -1,32 +1,14 @@
-__pycache__/
-*.py[cod]
-.pytest_cache/
+# This branch is static files only. Nothing is built or installed.
+.DS_Store
 *.log
+.vscode/
+.idea/
 
-# Trained weights, ONNX exports and cached features: all reproducible from
-# train.py / dr/train.py, and too large to belong in git.
-models/
-artifacts/
-*.pt
-*.onnx
-*.joblib
-*.npz
-
-# Corpora are licence-restricted and must never be committed. Point
-# DR_DATA_ROOT at them instead.
-datasets/
-cache/
-
-# Local databases. These hold password hashes, patient records and the audit
-# log even in development, and must never leave the machine.
+# Never belongs on a frontend branch, but guard anyway: these appear if you
+# check out main's server here by accident.
+__pycache__/
 *.db
 *.db-wal
 *.db-shm
+artifacts/
 storage/
-
-.venv/
-.env
-
-# Scratch tree the notebooks write their embedded source into when run off
-# Kaggle/Colab. A second copy of core/ and dr/ that will silently drift.
-drishti_pkg/
