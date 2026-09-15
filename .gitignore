@@ -26,3 +26,7 @@ storage/
 
 .venv/
 .env
+
+# Scratch tree the notebooks write their embedded source into when run off
+# Kaggle/Colab. A second copy of core/ and dr/ that will silently drift.
+drishti_pkg/
