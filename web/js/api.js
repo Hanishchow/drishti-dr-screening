@@ -8,6 +8,22 @@
  * obtained this way still cannot sign off a grade unless its role allows it.
  */
 
+/**
+ * Where the API lives.
+ *
+ * Empty means same-origin, which is the case when the backend serves this
+ * page. Set a `<meta name="drishti-api" content="https://...">` in index.html
+ * (or `window.DRISHTI_API`) to run the frontend separately from the API --
+ * which is what the `frontend` branch and any static host need.
+ */
+export const API_BASE = (
+  document.querySelector('meta[name="drishti-api"]')?.content
+  || window.DRISHTI_API
+  || ''
+).replace(/\/$/, '');
+
+const url = (path) => API_BASE + path;
+
 export const state = {
   token: null,
   user: null,
@@ -53,7 +69,7 @@ export async function api(path, { method = 'GET', body, form, auth = true } = {}
     payload = JSON.stringify(body);
   }
 
-  const r = await fetch(path, { method, headers, body: payload });
+  const r = await fetch(url(path), { method, headers, body: payload });
 
   if (r.status === 401 && auth) {
     // The stored token refers to a user the server no longer has, or it
@@ -75,7 +91,7 @@ export async function api(path, { method = 'GET', body, form, auth = true } = {}
 
 /** Ask the server for a session. Returns the token payload, or null. */
 export async function openSession() {
-  const r = await fetch('/api/auth/session', { method: 'POST' });
+  const r = await fetch(url('/api/auth/session'), { method: 'POST' });
   if (!r.ok) return null;
   const tok = await r.json();
   state.token = tok.access_token;

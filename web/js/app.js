@@ -6,7 +6,7 @@
  * access was deliberately enabled. If it refuses, the page says so plainly
  * rather than presenting a form that would not help.
  */
-import { $, ensureSession, esc, state } from './api.js';
+import { $, API_BASE, ensureSession, esc, state } from './api.js';
 import * as planning from './planning.js';
 import * as queue from './queue.js';
 import * as screening from './screening.js';
@@ -31,7 +31,7 @@ function initNav() {
 
 async function loadHealth() {
   try {
-    const r = await fetch('/api/health');
+    const r = await fetch(`${API_BASE}/api/health`);
     if (!r.ok) return;
     const h = await r.json();
     const chip = $('#chip-model');
